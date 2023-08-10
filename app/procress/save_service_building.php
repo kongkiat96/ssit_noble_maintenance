@@ -26,21 +26,59 @@ if (isset($_POST['save_casebu'])) {
         resizepic($pic, $fixname_pic);
 
 
-        $getdata->my_sql_insert($connect, "building_list", "
-    ticket='" . $runticket_bu . "',
-    user_key ='" . $_SESSION['ukey'] . "',
-    department ='" . htmlspecialchars($_POST['department']) . "',
-    company = '" . htmlspecialchars($_POST['company']) . "',
-    se_id ='" . htmlspecialchars($_POST['se_id']) . "',
-    se_li_id ='" . htmlspecialchars($_POST['service_list']) . "',
-    as_code = '" . htmlspecialchars($_POST['as_code']) . "',
-    pic_before = '" . $fixname_pic . "',
-    se_other = '" . htmlspecialchars($_POST['other']) . "',
-    se_namecall = '" . htmlspecialchars($_POST['namecall']) . "',
-    se_approve = '" . htmlspecialchars($_POST['approve']) . "',
-    se_location = '" . htmlspecialchars($_POST['location']) . "',
-    date = '" . date("Y-m-d") . "',
-    time_start = '" . date("H:i:s") . "'");
+        //     $getdata->my_sql_insert($connect, "building_list", "
+        // ticket='" . $runticket_bu . "',
+        // user_key ='" . $_SESSION['ukey'] . "',
+        // department ='" . htmlspecialchars($_POST['department']) . "',
+        // company = '" . htmlspecialchars($_POST['company']) . "',
+        // se_id ='" . htmlspecialchars($_POST['se_id']) . "',
+        // se_li_id ='" . htmlspecialchars($_POST['service_list']) . "',
+        // as_code = '" . htmlspecialchars($_POST['as_code']) . "',
+        // pic_before = '" . $fixname_pic . "',
+        // se_other = '" . htmlspecialchars($_POST['other']) . "',
+        // se_namecall = '" . htmlspecialchars($_POST['namecall']) . "',
+        // se_approve = '" . htmlspecialchars($_POST['approve']) . "',
+        // se_location = '" . htmlspecialchars($_POST['location']) . "',
+        // date = '" . date("Y-m-d") . "',
+        // time_start = '" . date("H:i:s") . "'");
+
+        $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "user_key = '" . $_SESSION['ukey'] . "'");
+        if (COUNT($chkManager) == 0) {
+            $getdata->my_sql_insert($connect, "building_list", "
+        ticket='" . $runticket_bu . "',
+        user_key ='" . $_SESSION['ukey'] . "',
+        department ='" . htmlspecialchars($_POST['department']) . "',
+        company = '" . htmlspecialchars($_POST['company']) . "',
+        se_id ='" . htmlspecialchars($_POST['se_id']) . "',
+        se_li_id ='" . htmlspecialchars($_POST['service_list']) . "',
+        as_code = '" . htmlspecialchars($_POST['as_code']) . "',
+        pic_before = '" . $fixname_pic . "',
+        se_other = '" . htmlspecialchars($_POST['other']) . "',
+        se_namecall = '" . htmlspecialchars($_POST['namecall']) . "',
+        se_approve = '" . htmlspecialchars($_POST['approve']) . "',
+        se_location = '" . htmlspecialchars($_POST['location']) . "',
+        date = '" . date("Y-m-d") . "',
+        time_start = '" . date("H:i:s") . "'");
+        } else {
+            $getdata->my_sql_insert($connect, "building_list", "
+            ticket='" . $runticket_bu . "',
+            user_key ='" . $_SESSION['ukey'] . "',
+            department ='" . htmlspecialchars($_POST['department']) . "',
+            company = '" . htmlspecialchars($_POST['company']) . "',
+            se_id ='" . htmlspecialchars($_POST['se_id']) . "',
+            se_li_id ='" . htmlspecialchars($_POST['service_list']) . "',
+            as_code = '" . htmlspecialchars($_POST['as_code']) . "',
+            pic_before = '" . $fixname_pic . "',
+            se_other = '" . htmlspecialchars($_POST['other']) . "',
+            se_namecall = '" . htmlspecialchars($_POST['namecall']) . "',
+            se_approve = '" . htmlspecialchars($_POST['approve']) . "',
+            se_location = '" . htmlspecialchars($_POST['location']) . "',
+            card_status = 'wait_approve',
+            manager_approve = '" . $chkManager->manager_user_key . "',
+            manager_approve_status = 'N',
+            date = '" . date("Y-m-d") . "',
+            time_start = '" . date("H:i:s") . "'");
+        }
 
         // ส่งข้อมูลเข้าไลน์
 
@@ -168,5 +206,60 @@ if (isset($_POST['save_editcase'])) {
         $alert = $success;
     } else {
         $alert = $warning;
+    }
+}
+
+if (isset($_POST['save_approve'])) {
+    if (!empty($_POST['approve_status'])) {
+        $getFlag = $_POST['approve_status'] == "Y" ? null : $_POST['approve_status'];
+        $getdata->my_sql_update(
+            $connect,
+            "building_list",
+            "card_status='" . $getFlag . "',
+            manager_approve_status = 'Y',
+      date_update='" . date("Y-m-d") . "',
+      time_update='" . date("H:i:s") . "'", //เพิ่ม เวลา
+            "ticket='" . htmlspecialchars($_POST['card_key']) . "'"
+        );
+
+        $getdata->my_sql_insert(
+            $connect,
+            "building_comment",
+            "card_status='" . htmlspecialchars($_POST['off_case_status']) . "',
+      admin_update='" . $name_key . "',
+      comment='" . htmlspecialchars($_POST['comment']) . "',
+      date ='" . date("Y-m-d H:i:s") . "',
+      ticket='" . htmlspecialchars($_POST['card_key']) . "'"
+        );
+
+
+        // ส่งข้อมูลเข้าไลน์
+        $ticket = $_POST['ticket'];
+        $name_admin = $_POST['admin'];
+        $status = $_POST['off_case_status'];
+        $date_send = date('d/m/Y');
+        $time_send = date("H:i");
+        $namecall = $_POST['namecall'];
+        $location = $_POST['location'];
+        $detail = $_POST['detail'];
+        $line_token = $getalert->alert_line_token; // Token
+        $line_text = "
+         /*** อนุมัติจากผู้บังคับบัญชา ***/
+         ------------------------
+         Ticket : $ticket
+         ------------------------
+         ผู้ดำเนินการ : $name_admin
+         สถานะ :  " . @cardStatus_for_line($status) . " 
+         ผู้แจ้ง : $namecall
+         สาขา : $location
+         รายละเอียด : $detail
+         ------------------------
+         วันที่: {$date_send}
+         เวลา: {$time_send}
+         ";
+
+        lineNotify($line_text, $line_token); // เรียกใช้ Functions line
+
+        $alert = $success;
     }
 }

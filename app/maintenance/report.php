@@ -269,7 +269,16 @@ if (isset($_POST['export'])) {
                                     } ?></td>
                                 <!-- <td><?php echo @getemployee($show_total->user_key); ?></td>
                                 <td><?php echo @getemployee_department($show_total->user_key); ?></td> -->
-                                <td><?php echo $show_total->se_namecall; ?></td>
+                                <td><?php
+                                    $search = $getdata->my_sql_query($connect, NULL, "employee", "card_key ='" . $show_total->se_namecall . "'");
+                                    if (COUNT($search) == 0) {
+                                        $chkName = $show_total->se_namecall;
+                                    } else {
+                                        $chkName = getemployee($show_total->se_namecall);
+                                    }
+
+                                    echo $chkName;
+                                    ?></td>
                                 <td><?php echo $show_total->se_location ?></td>
                                 <td><?php echo $show_total->se_approve; ?></td>
                                 <td><?php echo @service($show_total->se_id); ?></td>

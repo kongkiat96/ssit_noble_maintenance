@@ -286,34 +286,21 @@ if (isset($_POST['save_info'])) {
 }
 
 if (isset($_POST['save_alert'])) {
-	$line = htmlspecialchars($_POST['line_notify']);
+	$lineToken = $_POST['line_notify'];
 	$mail_host = htmlspecialchars($_POST['host']);
 	$mail_get = htmlspecialchars($_POST['getmail']);
 	$username = htmlspecialchars($_POST['username']);
 	$password = $_POST['password'];
 
-	if ($password != NULL) {
-		$getdata->my_sql_update(
-			$connect,
-			"system_alert",
-			"alert_line_token = '" . $line . "',
+	$getdata->my_sql_update(
+		$connect,
+		'system_alert',
+		"alert_line_token = '" . $lineToken . "',
 			alert_mail_server = '" . $mail_host . "',
 			alert_mail_user = '" . $username . "',
 			alert_mail_pass = '" . $password . "',
-			alert_mail_get = '" . $mail_get . "'"
-		);
-	} else {
-		$getdata->my_sql_update(
-			$connect,
-			"system_alert",
-			"alert_line_token = '" . $line . "',
-			alert_mail_server = '" . $mail_host . "',
-			alert_mail_user = '" . $username . "',
-			alert_mail_get = '" . $mail_get . "'"
-		);
-	}
-
-
-
+			alert_mail_get = '" . $mail_get . "'",
+		'alert_key = "cd5fe35c5af97026fd4efdfe4afd4376"'
+	);
 	$alert = $success;
 }
