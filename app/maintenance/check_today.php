@@ -40,7 +40,16 @@ $show_case = $getdata->my_sql_query($connect, null, "building_list", "date_updat
                     <tr>
                         <td><?php echo $u; ?></td>
                         <td><?php echo $showcase->ticket; ?></td>
-                        <td><?php echo $showcase->se_namecall; ?></td>
+                        <td><?php
+                            $search = $getdata->my_sql_query($connect, NULL, "employee", "card_key ='" . $showcase->se_namecall . "'");
+                            if (COUNT($search) == 0) {
+                                $chkName = $showcase->se_namecall;
+                            } else {
+                                $chkName = getemployee($showcase->se_namecall);
+                            }
+
+                            echo $chkName;
+                            ?></td>
                         <td><?php echo $showcase->se_location; ?></td>
                         <td><?php echo @dateConvertor($showcase->date); ?></td>
                         <td><?php echo @dateConvertor($showcase->date_update); ?></td>

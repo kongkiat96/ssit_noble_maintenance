@@ -8,6 +8,7 @@ echo @$alert;
 
         $('#get_sum_building').load('auto/sum_case_building.php');
         $('#get_table_building').load('auto/table_building_user.php');
+        $('#list_approve').load('auto/list_approve.php');
     }, 1000) /* time in milliseconds (ie 2 seconds)*/
 </script>
 
@@ -74,7 +75,15 @@ echo @$alert;
                     <div class="form-group row">
                         <div class="col-md-6 col-sm-12">
                             <label for="namecall">ชื่อผู้แจ้ง</label>
-                            <input type="text" name="namecall" id="namecall" class="form-control" required>
+                            <!-- <input type="text" name="namecall" id="namecall" class="form-control" required> -->
+                            <select name="namecall" id="namecall" class="form-control select2bs4" required style="width: 100%;">
+                                <option value="">--- เลือกข้อมูล ---</option>
+                                <?php $getuser = $getdata->my_sql_select($connect, NULL, "user", "user_status = '1'");
+                                while ($showUser = mysqli_fetch_object($getuser)) {
+                                    echo '<option value="' . $showUser->user_key . '">' .  getemployee($showUser->user_key) . '</option>';
+                                }
+                                ?>
+                            </select>
                             <div class="invalid-feedback">
                                 ระบุ ชื่อผู้แจ้ง .
                             </div>
@@ -90,7 +99,8 @@ echo @$alert;
                     <div class="form-group row">
                         <div class="col-12">
                             <label for="approve">ผู้อนุมัติ</label>
-                            <input type="text" class="form-control" name="approve" id="approve">
+                            <!-- <input type="text" class="form-control" name="approve" id="approve"> -->
+                            <input type="text" class="form-control input-sm" id="approve" name="approve">
                             <div class="invalid-feedback">
                                 ระบุ สาขา.
                             </div>
@@ -129,6 +139,25 @@ echo @$alert;
     </div>
 </div>
 <!-- End View -->
+
+<div class="modal fade" id="approve-frm" role="dialog" aria-labelledby="approve-frm" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <form method="post" enctype="multipart/form-data" class="was-validated" id="waitsave2">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">เปลี่ยนแปลง</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="approve-frm">
+
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
 
 <!-- Cancel -->
 
@@ -238,6 +267,16 @@ echo @$alert;
                     <li class="nav-item">
                         <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">เปลี่ยนแปลงข้อมูล</a>
                     </li>
+                    <?php
+                    $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "manager_user_key = '" . $userdata->user_key . "'");
+
+                    if (COUNT($chkManager->id) >= 1) {
+                    ?>
+                        <li class="nav-item">
+                            <a class="nav-link" id="approve-list-tab" data-toggle="tab" href="#approve-list" role="tab" aria-controls="approve-list" aria-selected="false">
+                                รายการอนุมัติ</a>
+                        </li>
+                    <?php } ?>
                 </ul>
                 <hr>
                 <div class="tab-content px-3 px-xl-5" id="myTabContent">
@@ -293,10 +332,41 @@ echo @$alert;
 
                     </div>
 
+                    <div class="tab-pane fade" id="approve-list" role="tabpanel" aria-labelledby="approve-list-tab">
+                        <div class="mt-5">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="basic-data-table">
+                                        <table class="table nowrap text-center" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Case ID</th>
+                                                    <th>Ticket</th>
+                                                    <th>Date</th>
+                                                    <th>Time</th>
+                                                    <th>Status</th>
+                                                    <th>Date success</th>
+
+                                                    <th>จัดการ</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody id="list_approve">
+
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="tab-pane fade" id="summary" role="tabpanel" aria-labelledby="summary-tab">
                         <div class="mt-5">
                             <div class="responsive-data-table-it">
-                                <table id="responsive-data-table-it-02" class="table dt-responsive hover" style="width:100%">
+                                <table id="for-home" class="table dt-responsive nowrap hover" style="font-family: sarabun; font-size: 14px;
+    text-align: center;" width="100%">
                                     <thead class="font-weight-bold text-center">
                                         <tr>
                                             <td>ลำดับ</td>
@@ -317,9 +387,9 @@ echo @$alert;
                                         <?php
                                         $i = 0;
                                         if ($_SESSION['uclass'] == 3 || $_SESSION['uclass'] == 2) {
-                                            $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID ORDER BY ID desc");
+                                            $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID ORDER BY ID desc LIMIT 20");
                                         } else {
-                                            $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID AND user_key = '" . $_SESSION['ukey'] . "' ORDER BY ID desc");
+                                            $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID AND user_key = '" . $_SESSION['ukey'] . "' ORDER BY ID desc LIMIT 20");
                                         }
 
                                         while ($show_total = mysqli_fetch_object($get_total)) {
@@ -331,7 +401,16 @@ echo @$alert;
                                                 <td><?php echo @$show_total->ticket; ?></td>
 
 
-                                                <td><?php echo $show_total->se_namecall; ?></td>
+                                                <td><?php
+                                                    $search = $getdata->my_sql_query($connect, NULL, "employee", "card_key ='" . $show_total->se_namecall . "'");
+                                                    if (COUNT($search) == 0) {
+                                                        $chkName = $show_total->se_namecall;
+                                                    } else {
+                                                        $chkName = getemployee($show_total->se_namecall);
+                                                    }
+
+                                                    echo $chkName;
+                                                    ?></td>
 
                                                 <td><?php echo $show_total->se_location ?></td>
 
@@ -343,6 +422,8 @@ echo @$alert;
                                                     <?php
                                                     if (@$show_total->card_status == NULL) {
                                                         echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                                    } else if ($show_total->card_status == 'wait_approve') {
+                                                        echo '<span class="badge badge-info">รอการอนุมัติจากผู้บังคับบัญชา</span>';
                                                     } else {
                                                         echo @cardStatus($show_total->card_status);
                                                     }
@@ -453,3 +534,18 @@ echo @$alert;
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        $("#namecall").change(function() {
+            var selectedValue = $(this).val();
+
+            // ส่งค่าที่เลือกไปยัง PHP
+            $.post("getmanager.php", {
+                value: selectedValue
+            }, function(data) {
+                // แสดงผลลัพธ์ใน input
+                $("#approve").val(data);
+            });
+        });
+    });
+</script>

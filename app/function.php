@@ -247,7 +247,10 @@ switch (htmlspecialchars($_GET['type'])) {
 		$getdata->my_sql_update($connect, "members_prefix", "prefix_status = '2'", "prefix_key='" . htmlspecialchars($_GET['key']) . "'");
 		echo '<script>window.history.back();</script>';
 		break;
-
+	case "delete_manager":
+		$getdata->my_sql_delete($connect, "manager", "id='" . htmlspecialchars($_GET['key']) . "'");
+		echo '<script>window.history.back();</script>';
+		break;
 	case "change_prefix":
 		if (htmlspecialchars($_GET['sts']) == "1") {
 			$getdata->my_sql_update($connect, "members_prefix", "prefix_status = '0'", "prefix_key='" . htmlspecialchars($_GET['key']) . "'");
