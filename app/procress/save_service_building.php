@@ -93,9 +93,9 @@ if (isset($_POST['save_casebu'])) {
         $type = $_POST['se_id'];
         $list = $_POST['service_list'];
         $other = $rc_other;
-        $namecall = $_POST['namecall'];
+        $namecall = @getemployee($_POST['namecall']);
         $approve = $_POST['approve'];
-        $location = $_POST['location'];
+        $location = @prefixbranch($_POST['location']);
         $date_send = date('d/m/Y');
 
         $line_token = $getalert->alert_line_token; // Token
@@ -239,8 +239,8 @@ if (isset($_POST['save_approve'])) {
         $status = $_POST['off_case_status'];
         $date_send = date('d/m/Y');
         $time_send = date("H:i");
-        $namecall = $_POST['namecall'];
-        $location = $_POST['location'];
+        $namecall = @getemployee($_POST['namecall']);
+        $location = @prefixbranch($_POST['location']);
         $detail = $_POST['detail'];
         $line_token = $getalert->alert_line_token; // Token
         $line_text = "

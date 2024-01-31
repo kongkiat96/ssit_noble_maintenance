@@ -124,7 +124,7 @@ $chk_case = $getdata->my_sql_query($connect, NULL, "building_list", "ticket='" .
             </div>
             <div class="col-md-6 col-sm-12">
               <label for="location">สาขา</label>
-              <input type="text" name="location" id="location" class="form-control" readonly value="<?php echo $chk_case->se_location; ?>">
+              <input type="text" name="location" id="location" class="form-control" readonly value="<?php echo @prefixbranch($chk_case->se_location); ?>">
             </div>
           </div>
           <div class="form-group row">

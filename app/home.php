@@ -88,11 +88,27 @@ echo @$alert;
                                 ระบุ ชื่อผู้แจ้ง .
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-12">
+                        <!-- <div class="col-md-6 col-sm-12">
                             <label for="location">สาขา</label>
                             <input type="text" name="location" id="location" class="form-control" required>
                             <div class="invalid-feedback">
                                 ระบุ สาขา .
+                            </div>
+                        </div> -->
+                        <div class="col-md-6 col-sm-12">
+                            <label for="location">สาขา</label>
+                            <select class="form-control select2bs4" style="width: 100%;" name="location" id="location" required>
+                                <option value="">--- เลือก สาขา ---</option>
+                                <?php
+                                $getbranch = $getdata->my_sql_select($connect, NULL, "branch", "id AND status ='1' ORDER BY id ");
+                                while ($showbranch = mysqli_fetch_object($getbranch)) {
+                                    echo '<option value="' . $showbranch->id . '">' . $showbranch->branch_name . '</option>';
+                                }
+                                ?>
+                            </select>
+
+                            <div class="invalid-feedback">
+                                ระบุ สาขา.
                             </div>
                         </div>
                     </div>

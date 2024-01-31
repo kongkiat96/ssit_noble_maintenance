@@ -99,6 +99,10 @@ $(function () {
   $('#ForExport').DataTable({
     dom: 'Bfrtip',
     searching: false,
+    pageLength: 50,
+columnDefs: [
+        { targets: 0, visible: false } // ซ่อนคอลัมน์แรก
+    ],
     buttons: [
       {
         extend: "print",
