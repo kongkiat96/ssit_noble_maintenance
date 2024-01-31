@@ -3,22 +3,39 @@
 if (isset($_POST['export'])) {
 
 
-    if ($_POST['month_case'] != NULL && $_POST['year_case'] == NULL) {
-        $month_case = $_POST['month_case'];
-        $getcaseshow = $getdata->my_sql_select($connect, NULL, "building_list", "ID <> 'hidden' AND date LIKE '%" . date("Y-" . $month_case . "") . "%' ORDER BY ticket", "ID");
+    // if ($_POST['month_case'] != NULL && $_POST['year_case'] == NULL) {
+    //     $month_case = $_POST['month_case'];
+    //     $getcaseshow = $getdata->my_sql_select($connect, NULL, "building_list", "ID <> 'hidden' AND date LIKE '%" . date("Y-" . $month_case . "") . "%' ORDER BY ticket", "ID");
+    // }
+    // if ($_POST['year_case'] != NULL && $_POST['month_case'] == NULL) {
+    //     $year_case = $_POST['year_case'];
+    //     $getcaseshow = $getdata->my_sql_select($connect, NULL, "building_list", "ID <> 'hidden' AND date LIKE '%" . date($year_case . "-m-" .  "") . "%' ORDER BY ticket", "ID");
+    // }
+    // if ($_POST['year_case'] != NULL && $_POST['month_case'] != NULL) {
+    //     $month_case = $_POST['month_case'];
+    //     $year_case = $_POST['year_case'];
+    //     $getcaseshow = $getdata->my_sql_select($connect, NULL, "building_list", "ID <> 'hidden' AND date LIKE '%" . date($year_case . "-" . $month_case . "-" .  "") . "%' ORDER BY ticket", "ID");
+    // }
+    // if ($_POST['year_case'] == NULL && $_POST['month_case'] == NULL) {
+    //     $getcaseshow = $getdata->my_sql_select($connect, NULL, "building_list", "ID <> 'hidden' ORDER BY ticket DESC");
+    // }
+
+    $month_case = isset($_POST['month_case']) ? $_POST['month_case'] : null;
+    $year_case = isset($_POST['year_case']) ? $_POST['year_case'] : null;
+    $status = isset($_POST['status']) ? $_POST['status'] : null;
+
+    $whereClause = "ID <> 'hidden'";
+    if ($month_case != null && $year_case == null) {
+        $whereClause .= " AND date LIKE '%" . date("Y-$month_case") . "%'";
+    } elseif ($year_case != null && $month_case == null) {
+        $whereClause .= " AND date LIKE '%" . date("$year_case") . "%'";
+    } elseif ($year_case != null && $month_case != null) {
+        $whereClause .= " AND date LIKE '%" . date("$year_case-$month_case") . "%'";
     }
-    if ($_POST['year_case'] != NULL && $_POST['month_case'] == NULL) {
-        $year_case = $_POST['year_case'];
-        $getcaseshow = $getdata->my_sql_select($connect, NULL, "building_list", "ID <> 'hidden' AND date LIKE '%" . date($year_case . "-m-" .  "") . "%' ORDER BY ticket", "ID");
+    if ($status != null) {
+        $whereClause .= " AND card_status = '$status'";
     }
-    if ($_POST['year_case'] != NULL && $_POST['month_case'] != NULL) {
-        $month_case = $_POST['month_case'];
-        $year_case = $_POST['year_case'];
-        $getcaseshow = $getdata->my_sql_select($connect, NULL, "building_list", "ID <> 'hidden' AND date LIKE '%" . date($year_case . "-" . $month_case . "-" .  "") . "%' ORDER BY ticket", "ID");
-    }
-    if ($_POST['year_case'] == NULL && $_POST['month_case'] == NULL) {
-        $getcaseshow = $getdata->my_sql_select($connect, NULL, "building_list", "ID <> 'hidden' ORDER BY ticket DESC");
-    }
+    $getcaseshow = $getdata->my_sql_select($connect, null, "building_list", $whereClause . " ORDER BY ticket ASC");
 
 
     $log_key = substr(md5(time("now")), 8, 16);
@@ -165,7 +182,7 @@ if (isset($_POST['export'])) {
         <form method="post" action="<?php echo $SERVER_NAME; ?>" class="needs-validation">
 
             <div class="form-group row d-flex justify-content-center">
-                <div class="col-md-6 col-sm-12">
+                <div class="col-md-4 col-sm-12">
                     <label for="month_case">ระบุเดือน</label>
                     <select name="month_case" id="month_case" class="form-control select2bs4">
                         <option value="" selected>--- เลือกข้อมูล ---</option>
@@ -184,7 +201,7 @@ if (isset($_POST['export'])) {
                     </select>
                 </div>
 
-                <div class="col-md-6 col-sm-12">
+                <div class="col-md-4 col-sm-12">
                     <label for="year_case">ระบุปี</label>
                     <?php
                     // Sets the top option to be the current year. (IE. the option that is chosen by default).
@@ -203,6 +220,24 @@ if (isset($_POST['export'])) {
                     }
                     print '</select>';
                     ?>
+                </div>
+
+                <div class="col-md-4 col-sm-12">
+                    <label for="status">ระบุสถานะงาน</label>
+                    <select name="status" id="status" class="form-control select2bs4">
+                        <option value="" selected>--- เลือกข้อมูล ---</option>
+                        <?php
+                        $select_status = $getdata->my_sql_select($connect, NULL, "card_type", "ctype_status ='1' ORDER BY ctype_insert");
+
+                        while ($show_status = mysqli_fetch_object($select_status)) {
+
+                            echo '<option value="' . $show_status->ctype_key . '">' . $show_status->ctype_name . '</option>';
+                        }
+
+
+
+                        ?>
+                    </select>
                 </div>
             </div>
 
@@ -260,7 +295,8 @@ if (isset($_POST['export'])) {
                         while ($show_total = mysqli_fetch_object($getcaseshow)) {
                             $i++; ?>
                             <tr>
-                                <td><?php echo $i; ?></td>
+                                <!-- <td><?php echo $i; ?></td> -->
+                                <td><?php echo $show_total->ID; ?></td>
                                 <td><?php echo $show_total->ticket; ?></td>
                                 <td><?php if ($show_total->as_code != NULL) {
                                         echo $show_total->as_code;

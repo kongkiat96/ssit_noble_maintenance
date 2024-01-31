@@ -266,7 +266,8 @@ include_once 'procress/dataSave.php';
                     <tbody>
                         <?php
                         $i = 0;
-                        $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID AND card_status != '2e34609794290a770cb0349119d78d21' AND card_status != '57995055c28df9e82476a54f852bd214' OR card_status IS NULL ORDER BY ticket DESC");
+                        // $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID AND card_status NOT IN ('2e34609794290a770cb0349119d78d21','57995055c28df9e82476a54f852bd214') OR card_status IS NULL ORDER BY ticket DESC");
+                        $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID AND date LIKE '%".date('Y')."%' ORDER BY ticket DESC");
                         while ($show_total = mysqli_fetch_object($get_total)) {
                             $i++;
                         ?>
