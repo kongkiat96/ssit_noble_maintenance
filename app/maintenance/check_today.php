@@ -32,7 +32,7 @@ $show_case = $getdata->my_sql_query($connect, null, "building_list", "date_updat
             <tbody>
                 <?php
                 $u = 0;
-                $getcase = $getdata->my_sql_select($connect, null, "building_list", "date_update ='" . htmlspecialchars($_GET['key']) . "'");
+                $getcase = $getdata->my_sql_select($connect, null, "building_list", "date_update ='" . htmlspecialchars($_GET['key']) . "' AND card_status != '33831963cbe86c4e544c5a999984aa7b'");
 
                 while ($showcase = mysqli_fetch_object($getcase)) {
                     $u++;
@@ -50,7 +50,7 @@ $show_case = $getdata->my_sql_query($connect, null, "building_list", "date_updat
 
                             echo $chkName;
                             ?></td>
-                        <td><?php echo $showcase->se_location; ?></td>
+                        <td><?php echo @prefixbranch($showcase->se_location); ?></td>
                         <td><?php echo @dateConvertor($showcase->date); ?></td>
                         <td><?php echo @dateConvertor($showcase->date_update); ?></td>
                     </tr>

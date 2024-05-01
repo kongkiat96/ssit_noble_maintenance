@@ -45,7 +45,7 @@
                   ?></u></h5>
         </div>
         <div class="row m-2">
-          <h5 class="font-weight-bold">สาขา : <u><?php echo $card_detail->se_location; ?></u></h5>
+          <h5 class="font-weight-bold">สาขา : <u><?php echo @prefixbranch($card_detail->se_location); ?></u></h5>
         </div>
         <div class="row m-2">
           <h5 class="font-weight-bold">ผู้อนุมัติ : <u><?php echo $card_detail->se_approve; ?></u></h5>

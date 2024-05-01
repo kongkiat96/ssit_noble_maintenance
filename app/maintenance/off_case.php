@@ -23,7 +23,7 @@ $get_admin = $getdata->my_sql_query($connect, NULL, "user", "user_key = '" . $_S
       <select name="off_case_status" id="off_case_status" class="form-control select2bs4" required>
         <option value="" selected>--- เลือกข้อมูล ---</option>
         <?php
-        $select_status = $getdata->my_sql_select($connect, NULL, "card_type", "ctype_status ='1' ORDER BY ctype_insert");
+        $select_status = $getdata->my_sql_select($connect, NULL, "card_type", "ctype_status ='1' AND ctype_key NOT IN ('33831963cbe86c4e544c5a999984aa7b') ORDER BY ctype_insert");
         if ($_SESSION['uclass'] == 1) {
           echo '<option value="57995055c28df9e82476a54f852bd214">ยกเลิกการแจ้ง</option>';
           echo '<option value="5cafc78523f4f5e4812f9545b2ba5ae7">แจ้งดำเนินการอีกครั้ง</option>';
@@ -79,6 +79,11 @@ $get_admin = $getdata->my_sql_query($connect, NULL, "user", "user_key = '" . $_S
       </div>
     </div>
   </div>
+
+  <div class="form-group row col-12">
+      <label for="name_mt">ชื่อช่างผู้ดำเนินงาน</label>
+      <input type="text" class="form-control" name="name_mt" id="name_mt" value="<?php echo @$chk_case->name_mt; ?>">
+    </div>
 
   <div class="form-group row">
     <div class="col-md-6 col-sm-12">

@@ -142,7 +142,7 @@ include_once 'procress/dataSave.php';
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-md font-weight-bold text-danger text-uppercase mb-1"><a href="?p=maintenance_casetoday" class="text-danger">จำนวนรายการแจ้งปัญหาที่ต้องแล้วเสร็จวันนี้</a> <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#showcase_today" data-whatever="<?php echo date("Y-m-d"); ?>" data-top="toptitle" data-placement="top" title="วันที่ <?php echo @dateConvertor(date("Y-m-d")); ?>"> <i class="fa fa-search fa-fw"></i></button></div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?php @$gettoday = $getdata->my_sql_show_rows($connect, "building_list", "ID <> 'hidden' AND (date_update LIKE '%" . date("Y-m-d") . "%' )");
+                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?php @$gettoday = $getdata->my_sql_show_rows($connect, "building_list", "ID <> 'hidden' AND (date_update LIKE '%" . date("Y-m-d") . "%' ) AND card_status != '33831963cbe86c4e544c5a999984aa7b'");
                                                                                 echo @number_format($gettoday); ?></div>
                         </div>
                         <div class="col-auto">
@@ -172,7 +172,7 @@ include_once 'procress/dataSave.php';
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-md font-weight-bold text-success text-uppercase mb-1">จำนวนรายการแจ้งปัญหาที่เสร็จแล้ว</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?php @$getall = $getdata->my_sql_show_rows($connect, "building_list", "card_status = '2e34609794290a770cb0349119d78d21' AND (date LIKE '%" . date("Y-m") . "%' )");
+                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?php @$getall = $getdata->my_sql_show_rows($connect, "building_list", "card_status = '33831963cbe86c4e544c5a999984aa7b' AND (date LIKE '%" . date("Y-m") . "%' )");
                                                                                 echo @number_format($getall); ?></div>
                         </div>
                         <div class="col-auto">
@@ -267,7 +267,7 @@ include_once 'procress/dataSave.php';
                         <?php
                         $i = 0;
                         // $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID AND card_status NOT IN ('2e34609794290a770cb0349119d78d21','57995055c28df9e82476a54f852bd214') OR card_status IS NULL ORDER BY ticket DESC");
-                        $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID AND date LIKE '%".date('Y')."%' ORDER BY ticket DESC");
+                        $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "date LIKE '%" . date('Y') . "%' AND card_status NOT IN ('wait_approve') OR card_status IS NULL ORDER BY ticket DESC");
                         while ($show_total = mysqli_fetch_object($get_total)) {
                             $i++;
                         ?>
@@ -287,7 +287,7 @@ include_once 'procress/dataSave.php';
                                     echo $chkName;
                                     ?></td>
                                 <!-- <td><?php echo @getemployee_department($show_total->user_key); ?></td> -->
-                                <td><?php echo $show_total->se_location ?></td>
+                                <td><?php echo @prefixbranch($show_total->se_location) ?></td>
 
 
                                 <td><?php echo @dateConvertor($show_total->date); ?></td>
@@ -303,7 +303,7 @@ include_once 'procress/dataSave.php';
 
                                 <td class="text-center">
                                     <?php
-                                    if (@$show_total->card_status == NULL) {
+                                    if (@$show_total->card_status == NULL || @$show_total->card_status == 'approve_do') {
                                         echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
                                     } else {
                                         echo @cardStatus($show_total->card_status);

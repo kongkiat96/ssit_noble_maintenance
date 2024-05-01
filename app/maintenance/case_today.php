@@ -187,7 +187,7 @@ if (isset($_POST['search'])) {
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-md font-weight-bold text-success text-uppercase mb-1">จำนวนรายการแจ้งปัญหาที่เสร็จแล้ว</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?php @$getall = $getdata->my_sql_show_rows($connect, "building_list", "card_status = '2e34609794290a770cb0349119d78d21' AND (date LIKE '%" . date("Y-m") . "%' )");
+                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?php @$getall = $getdata->my_sql_show_rows($connect, "building_list", "card_status = '33831963cbe86c4e544c5a999984aa7b' AND (date LIKE '%" . date("Y-m") . "%' )");
                                                                                 echo @number_format($getall); ?></div>
                         </div>
                         <div class="col-auto">
@@ -337,7 +337,7 @@ if (isset($_POST['search'])) {
                                     <!-- <td><?php echo @getemployee($show_total->user_key); ?></td> -->
                                     <td><?php echo $show_total->se_namecall; ?></td>
                                     <!-- <td><?php echo @getemployee_department($show_total->user_key); ?></td> -->
-                                    <td><?php echo $show_total->se_location ?></td>
+                                    <td><?php echo @prefixbranch($show_total->se_location) ?></td>
 
 
                                     <td><?php echo @dateConvertor($show_total->date); ?></td>
@@ -430,7 +430,7 @@ if (isset($_POST['search'])) {
                                     <!-- <td><?php echo @getemployee($show_total->user_key); ?></td> -->
                                     <td><?php echo $show_total->se_namecall; ?></td>
                                     <!-- <td><?php echo @getemployee_department($show_total->user_key); ?></td> -->
-                                    <td><?php echo $show_total->se_location ?></td>
+                                    <td><?php echo @prefixbranch($show_total->se_location) ?></td>
 
 
                                     <td><?php echo @dateConvertor($show_total->date); ?></td>

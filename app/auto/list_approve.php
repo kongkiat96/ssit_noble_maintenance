@@ -17,13 +17,13 @@ date_default_timezone_set('Asia/Bangkok');
 
 <?php
 $i = 0;
-$get_total = $getdata->my_sql_select($connect, NULL, "building_list", "card_status = 'wait_approve' OR manager_approve = '" . $_SESSION['ukey'] . "'ORDER BY ticket DESC LIMIT 10");
+$get_total = $getdata->my_sql_select($connect, NULL, "building_list", "card_status = 'wait_approve' AND manager_approve = '" . $_SESSION['ukey'] . "'ORDER BY ticket DESC LIMIT 10");
 while ($show_total = mysqli_fetch_object($get_total)) {
     $i++;
 ?>
     <tr>
         <td><?php echo @$i; ?></td>
-        <td><a href="#" data-toggle="modal" data-target="#show_case" data-whatever="<?php echo @$show_total->ticket; ?>" class="btn btn-sm btn-outline-info" data-top="toptitle" data-placement="top" title="ตรวจสอบข้อมูล"><?php echo @$show_total->ticket; ?></a></td>
+        <td><a href="#" data-toggle="modal" data-target="#show_case_maintenance" data-whatever="<?php echo @$show_total->ticket; ?>" class="btn btn-sm btn-outline-info" data-top="toptitle" data-placement="top" title="ตรวจสอบข้อมูล"><?php echo @$show_total->ticket; ?></a></td>
         <td><?php echo @dateConvertor($show_total->date); ?></td>
         <td><?php echo $show_total->time_start; ?></td>
         <td>
@@ -31,7 +31,7 @@ while ($show_total = mysqli_fetch_object($get_total)) {
             if (@$show_total->card_status == NULL) {
                 echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
             } else if ($show_total->card_status == 'wait_approve'){
-                echo '<span class="badge badge-info">รอการอนุมัติจากผู้บังคับบัญชา</span>';
+                echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
             } else {
                 echo @cardStatus($show_total->card_status);
             }

@@ -304,3 +304,20 @@ if (isset($_POST['save_alert'])) {
 	);
 	$alert = $success;
 }
+
+if (isset($_POST['save_list_admin_approve'])) {
+	if (!empty(htmlspecialchars($_POST['list_admin'])) && !empty(htmlspecialchars($_POST['approve_menu']))) {
+		$getdata->my_sql_insert(
+			$connect,
+			"list_admin_approve",
+			"user_key = '" . htmlspecialchars($_POST['list_admin']) . "',
+			approve_menu = '" . htmlspecialchars($_POST['approve_menu']) . "',
+			create_at = '" . date('Y-m-d H:i:s') . "',
+            create_user ='" . Userlogin($_SESSION['ukey']) . "'"
+		);
+
+		$alert = $success;
+	} else {
+		$alert = $warning;
+	}
+}

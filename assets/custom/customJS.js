@@ -85,6 +85,17 @@ jQuery(document).ready(function () {
     "dom": '<"row justify-content-between top-information"lf>rt<"row justify-content-between bottom-information"ip><"clear">'
   });
 
+  jQuery('#responsive-data-table-home').DataTable({
+    "aLengthMenu": [[20, 30, 50, 75, -1], [20, 30, 50, 75, "All"]],
+    "pageLength": 20,
+    "order": [[0, "desc"]],
+    // "dom": '<"row justify-content-between top-information"lf>rt<"row justify-content-between bottom-information"ip><"clear">',
+    "searching": true,
+    // "scrollX": true,
+    // "scrollY": true,
+    "responsive": true
+  });
+
 });
 
 
@@ -92,8 +103,10 @@ $(function () {
 
   $('#for-home').DataTable({
     // dom: 'Bfrtip',
+    dom: '<"row justify-content-between top-information"lf>rt<"row justify-content-between bottom-information"ip><"clear">',
     scrollX: true,
     searching: true,
+    responsive: true
   });
 
   $('#ForExport').DataTable({
@@ -692,6 +705,46 @@ columnDefs: [
       cache: false,
       success: function (data) {
         modal.find('.approve-frm').html(data);
+      },
+      error: function (err) {
+        console.log(err);
+      }
+    });
+  });
+
+  $('#mt-manager-frm').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var recipient = button.data('whatever') // Extract info from data-* attributes
+    var modal = $(this);
+    var dataString = 'key=' + recipient;
+
+    $.ajax({
+      type: "GET",
+      url: "otherfrm/mt-manager_frm.php",
+      data: dataString,
+      cache: false,
+      success: function (data) {
+        modal.find('.mt-manager-frm').html(data);
+      },
+      error: function (err) {
+        console.log(err);
+      }
+    });
+  });
+
+  $('#approve-mt-manager-frm').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var recipient = button.data('whatever') // Extract info from data-* attributes
+    var modal = $(this);
+    var dataString = 'key=' + recipient;
+
+    $.ajax({
+      type: "GET",
+      url: "otherfrm/approve-mt-manager_frm.php",
+      data: dataString,
+      cache: false,
+      success: function (data) {
+        modal.find('.approve-mt-manager-frm').html(data);
       },
       error: function (err) {
         console.log(err);

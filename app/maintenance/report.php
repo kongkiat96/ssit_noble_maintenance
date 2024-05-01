@@ -107,7 +107,7 @@ if (isset($_POST['export'])) {
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-md font-weight-bold text-success text-uppercase mb-1">จำนวนรายการแจ้งปัญหาที่เสร็จแล้ว</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800"><?php @$getall = $getdata->my_sql_show_rows($connect, "building_list", "card_status = '2e34609794290a770cb0349119d78d21' AND (date LIKE '%" . date("Y-m") . "%' )");
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><?php @$getall = $getdata->my_sql_show_rows($connect, "building_list", "card_status = '33831963cbe86c4e544c5a999984aa7b' AND (date LIKE '%" . date("Y-m") . "%' )");
                                                                             echo @number_format($getall); ?></div>
                     </div>
                     <div class="col-auto">
@@ -315,7 +315,7 @@ if (isset($_POST['export'])) {
 
                                     echo $chkName;
                                     ?></td>
-                                <td><?php echo $show_total->se_location ?></td>
+                                <td><?php echo @prefixbranch($show_total->se_location) ?></td>
                                 <td><?php echo $show_total->se_approve; ?></td>
                                 <td><?php echo @service($show_total->se_id); ?></td>
                                 <td><?php echo $show_total->se_other; ?></td>
@@ -359,7 +359,7 @@ if (isset($_POST['export'])) {
                                     ?>
                                 </td>
                                 <td><?php
-                                    if ($show_total->card_status == "2e34609794290a770cb0349119d78d21" && $show_total->card_status != "57995055c28df9e82476a54f852bd214") {
+                                    if ($show_total->card_status == "33831963cbe86c4e544c5a999984aa7b" && $show_total->card_status != "57995055c28df9e82476a54f852bd214") {
                                         echo @$show_total->time_update;
                                     } elseif ($show_total->card_status == "57995055c28df9e82476a54f852bd214") {
                                         echo @cardStatus($show_total->card_status);

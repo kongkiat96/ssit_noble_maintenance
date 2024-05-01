@@ -4,12 +4,45 @@ require_once 'procress/save_service_building.php';
 echo @$alert;
 ?>
 <script>
-    setInterval(function() {
+function refreshData() {
+    $.ajax({
+        url: 'auto/sum_case_building.php',
+        success: function(data) {
+            $('#get_sum_building').html(data);
+        }
+    });
+    $.ajax({
+        url: 'auto/table_building_user.php',
+        success: function(data) {
+            $('#get_table_building').html(data);
+        }
+    });
+    $.ajax({
+        url: 'auto/list_approve.php',
+        success: function(data) {
+            $('#list_approve').html(data);
+        }
+    });
+    $.ajax({
+        url: 'auto/list_checkwork.php',
+        success: function(data) {
+            $('#list_checkwork').html(data);
+        }
+    });
 
-        $('#get_sum_building').load('auto/sum_case_building.php');
-        $('#get_table_building').load('auto/table_building_user.php');
-        $('#list_approve').load('auto/list_approve.php');
-    }, 1000) /* time in milliseconds (ie 2 seconds)*/
+    $.ajax({
+        url: 'auto/list_check.php',
+        success: function(data) {
+            $('#list_check').html(data);
+        }
+    });
+}
+
+$(document).ready(function() {
+    refreshData(); // Call on document ready to load the data initially
+    var refreshInterval = 10000; // Adjust the time interval as needed.
+    setInterval(refreshData, refreshInterval);
+});
 </script>
 
 
@@ -175,6 +208,44 @@ echo @$alert;
     </div>
 </div>
 
+<div class="modal fade" id="mt-manager-frm" role="dialog" aria-labelledby="mt-manager-frm" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <form method="post" enctype="multipart/form-data" class="was-validated" id="waitsave2">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">เปลี่ยนแปลง</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="mt-manager-frm">
+
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="approve-mt-manager-frm" role="dialog" aria-labelledby="approve-mt-manager-frm" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <form method="post" enctype="multipart/form-data" class="was-validated" id="waitsave2">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">เปลี่ยนแปลง</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="approve-mt-manager-frm">
+
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Cancel -->
 
 <div class="modal fade" id="off_case_building" role="dialog" aria-labelledby="off_case_building" aria-hidden="true">
@@ -286,11 +357,23 @@ echo @$alert;
                     <?php
                     $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "manager_user_key = '" . $userdata->user_key . "'");
 
-                    if (COUNT($chkManager->id) >= 1) {
+                    if (COUNT($chkManager->id) >= 1 && $_SESSION['uclass'] != 3) {
                     ?>
                         <li class="nav-item">
                             <a class="nav-link" id="approve-list-tab" data-toggle="tab" href="#approve-list" role="tab" aria-controls="approve-list" aria-selected="false">
                                 รายการอนุมัติ</a>
+                        </li>
+                    <?php } ?>
+
+                    <?php if ($_SESSION['uclass'] == 3 && COUNT($chkManager->id) >= 1) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" id="checkwork-list-tab" data-toggle="tab" href="#checkwork-list" role="tab" aria-controls="checkwork-list" aria-selected="false">
+                                รายการงานอนุมัติซ่อม</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" id="check-list-tab" data-toggle="tab" href="#check-list" role="tab" aria-controls="check-list" aria-selected="false">
+                                รายการตรวจงานซ่อม</a>
                         </li>
                     <?php } ?>
                 </ul>
@@ -378,11 +461,71 @@ echo @$alert;
                         </div>
                     </div>
 
+                    <div class="tab-pane fade" id="checkwork-list" role="tabpanel" aria-labelledby="checkwork-list-tab">
+                        <div class="mt-5">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="basic-data-table">
+                                        <table class="table nowrap text-center" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Case ID</th>
+                                                    <th>Ticket</th>
+                                                    <th>Date</th>
+                                                    <th>Time</th>
+                                                    <th>Status</th>
+                                                    <th>Date success</th>
+
+                                                    <th>จัดการ</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody id="list_checkwork">
+
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="check-list" role="tabpanel" aria-labelledby="check-list-tab">
+                        <div class="mt-5">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="basic-data-table">
+                                        <table class="table nowrap text-center" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Case ID</th>
+                                                    <th>Ticket</th>
+                                                    <th>Date</th>
+                                                    <th>Time</th>
+                                                    <th>Status</th>
+                                                    <th>Date success</th>
+
+                                                    <th>จัดการ</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody id="list_check">
+
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="tab-pane fade" id="summary" role="tabpanel" aria-labelledby="summary-tab">
                         <div class="mt-5">
-                            <div class="responsive-data-table-it">
-                                <table id="for-home" class="table dt-responsive nowrap hover" style="font-family: sarabun; font-size: 14px;
-    text-align: center;" width="100%">
+                            <div class="responsive-data-table">
+                                <table id="for-home" class="table display nowrap hover" style="font-family: sarabun; font-size: 14px;
+    text-align: center;">
                                     <thead class="font-weight-bold text-center">
                                         <tr>
                                             <td>ลำดับ</td>
@@ -428,7 +571,7 @@ echo @$alert;
                                                     echo $chkName;
                                                     ?></td>
 
-                                                <td><?php echo $show_total->se_location ?></td>
+                                                <td><?php echo @prefixbranch($show_total->se_location) ?></td>
 
 
                                                 <td><?php echo @dateConvertor($show_total->date); ?></td>
@@ -439,7 +582,7 @@ echo @$alert;
                                                     if (@$show_total->card_status == NULL) {
                                                         echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
                                                     } else if ($show_total->card_status == 'wait_approve') {
-                                                        echo '<span class="badge badge-info">รอการอนุมัติจากผู้บังคับบัญชา</span>';
+                                                        echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
                                                     } else {
                                                         echo @cardStatus($show_total->card_status);
                                                     }

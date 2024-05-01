@@ -28,6 +28,7 @@ if (isset($_POST['save_offcase'])) {
             "building_list",
             "card_status='" . htmlspecialchars($_POST['off_case_status']) . "',
             se_price = '" . htmlspecialchars($_POST['price']) . "',
+            name_mt = '" . htmlspecialchars($_POST['name_mt']) . "',
       admin_update='" . $name_key . "',
       date_update='" . htmlspecialchars($_POST['date_off_case']) . "',
       time_update='" . date("H:i:s") . "'", //เพิ่ม เวลา
@@ -39,7 +40,7 @@ if (isset($_POST['save_offcase'])) {
             "building_comment",
             "card_status='" . htmlspecialchars($_POST['off_case_status']) . "',
       admin_update='" . $name_key . "',
-      comment='" . htmlspecialchars($_POST['comment']) . "',
+      comment='" . htmlspecialchars($_POST['comment']) . ' - ช่างผู้ดำเนินงาน ' . htmlspecialchars($_POST['name_mt']) . "',
       price = '" . htmlspecialchars($_POST['price']) . "',
       date ='" . date("Y-m-d H:i:s") . "',
       ticket='" . htmlspecialchars($_POST['card_key']) . "'"
@@ -52,8 +53,8 @@ if (isset($_POST['save_offcase'])) {
         $status = $_POST['off_case_status'];
         $date_send = date('d/m/Y');
         $time_send = date("H:i");
-        $namecall = $_POST['namecall'];
-        $location = $_POST['location'];
+        $namecall = @getemployee($_POST['namecall']);
+        $location =  @prefixbranch($_POST['location']);
         $detail = $_POST['detail'];
         $line_token = $getalert->alert_line_token; // Token
         $line_text = "
@@ -61,7 +62,7 @@ if (isset($_POST['save_offcase'])) {
          ------------------------
          Ticket : $ticket
          ------------------------
-         ผู้ดำเนินการ : คุณ $name_admin
+         ผู้ดำเนินการ : $name_admin
          สถานะ :  " . @cardStatus_for_line($status) . " 
          ผู้แจ้ง : $namecall
          สาขา : $location

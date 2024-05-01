@@ -263,3 +263,113 @@ if (isset($_POST['save_approve'])) {
         $alert = $success;
     }
 }
+
+if (isset($_POST['save_approve_do'])) {
+    if (!empty($_POST['approve_status'])) {
+        $getFlag = $_POST['approve_status'] == "Y" ? 'approve_do' : $_POST['approve_status'];
+        $getdata->my_sql_update(
+            $connect,
+            "building_list",
+            "card_status='" . $getFlag . "',
+            manager_approve_status = 'Y',
+      date_update='" . date("Y-m-d") . "',
+      time_update='" . date("H:i:s") . "'", //เพิ่ม เวลา
+            "ticket='" . htmlspecialchars($_POST['card_key']) . "'"
+        );
+
+        $getdata->my_sql_insert(
+            $connect,
+            "building_comment",
+            "card_status='" . htmlspecialchars($_POST['off_case_status']) . "',
+      admin_update='" . $name_key . "',
+      comment='" . htmlspecialchars($_POST['comment']) . "',
+      date ='" . date("Y-m-d H:i:s") . "',
+      ticket='" . htmlspecialchars($_POST['card_key']) . "'"
+        );
+
+
+        // ส่งข้อมูลเข้าไลน์
+        $ticket = $_POST['ticket'];
+        $name_admin = $_POST['admin'];
+        $status = $_POST['off_case_status'];
+        $date_send = date('d/m/Y');
+        $time_send = date("H:i");
+        $namecall = @getemployee($_POST['namecall']);
+        $location = @prefixbranch($_POST['location']);
+        $detail = $_POST['detail'];
+        $line_token = $getalert->alert_line_token; // Token
+        $line_text = "
+         /*** อนุมัติจาก MT Manager ***/
+         ------------------------
+         Ticket : $ticket
+         ------------------------
+         ผู้ดำเนินการ : $name_admin
+         สถานะ :  อนุมัติการแจ้งซ่อม
+         ผู้แจ้ง : $namecall
+         สาขา : $location
+         รายละเอียด : $detail
+         ------------------------
+         วันที่: {$date_send}
+         เวลา: {$time_send}
+         ";
+
+        lineNotify($line_text, $line_token); // เรียกใช้ Functions line
+
+        $alert = $success;
+    }
+}
+
+if (isset($_POST['save_approve_success'])) {
+    if (!empty($_POST['approve_status'])) {
+        $getFlag = $_POST['approve_status'] == "Y" ? '33831963cbe86c4e544c5a999984aa7b' : $_POST['approve_status'];
+        $getdata->my_sql_update(
+            $connect,
+            "building_list",
+            "card_status='" . $getFlag . "',
+            manager_approve_status = 'Y',
+      date_update='" . date("Y-m-d") . "',
+      time_update='" . date("H:i:s") . "'", //เพิ่ม เวลา
+            "ticket='" . htmlspecialchars($_POST['card_key']) . "'"
+        );
+
+        $getdata->my_sql_insert(
+            $connect,
+            "building_comment",
+            "card_status='" . htmlspecialchars($_POST['off_case_status']) . "',
+      admin_update='" . $name_key . "',
+      comment='" . htmlspecialchars($_POST['comment']) . "',
+      date ='" . date("Y-m-d H:i:s") . "',
+      ticket='" . htmlspecialchars($_POST['card_key']) . "'"
+        );
+
+
+        // ส่งข้อมูลเข้าไลน์
+        $ticket = $_POST['ticket'];
+        $name_admin = $_POST['admin'];
+        $status = $_POST['off_case_status'];
+        $date_send = date('d/m/Y');
+        $time_send = date("H:i");
+        $namecall = @getemployee($_POST['namecall']);
+        $location = @prefixbranch($_POST['location']);
+        $detail = $_POST['detail'];
+        $line_token = $getalert->alert_line_token; // Token
+        $line_text = "
+         /*** อนุมัติปิดงานจาก MT Manager ***/
+         ------------------------
+         Ticket : $ticket
+         ------------------------
+         ผู้ดำเนินการ : $name_admin
+         สถานะ :  ดำเนินงานเรียบร้อย
+         ผู้แจ้ง : $namecall
+         สาขา : $location
+         รายละเอียด : $detail
+         ------------------------
+         วันที่: {$date_send}
+         เวลา: {$time_send}
+         ";
+
+        lineNotify($line_text, $line_token); // เรียกใช้ Functions line
+
+        $alert = $success;
+    }
+}
