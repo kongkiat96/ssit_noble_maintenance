@@ -23,14 +23,23 @@ if (isset($_POST['save_offcase'])) {
             $getdata->my_sql_update($connect, 'building_list', "pic_after ='" . $editpic . "'", "ticket='" . htmlspecialchars($_POST['card_key']) . "'");
         }
 
+        $name_mt = implode(",", $_POST['name_mt']);
+
+        if($_POST['work_flag'] == 'success'){
+            $setFlag = 'work_success';
+        } else {
+            $setFlag = $_POST['work_flag'];
+        }
+
         $getdata->my_sql_update(
             $connect,
             "building_list",
             "card_status='" . htmlspecialchars($_POST['off_case_status']) . "',
             se_price = '" . htmlspecialchars($_POST['price']) . "',
-            name_mt = '" . htmlspecialchars($_POST['name_mt']) . "',
+            name_mt = '" . htmlspecialchars($name_mt) . "',
       admin_update='" . $name_key . "',
       date_update='" . htmlspecialchars($_POST['date_off_case']) . "',
+      work_flag='" . $setFlag . "',
       time_update='" . date("H:i:s") . "'", //เพิ่ม เวลา
             "ticket='" . htmlspecialchars($_POST['card_key']) . "'"
         );
@@ -40,7 +49,7 @@ if (isset($_POST['save_offcase'])) {
             "building_comment",
             "card_status='" . htmlspecialchars($_POST['off_case_status']) . "',
       admin_update='" . $name_key . "',
-      comment='" . htmlspecialchars($_POST['comment']) . ' - ช่างผู้ดำเนินงาน ' . htmlspecialchars($_POST['name_mt']) . "',
+      comment='" . htmlspecialchars($_POST['comment']) . ' - ช่างผู้ดำเนินงาน ' . htmlspecialchars($name_mt) . "',
       price = '" . htmlspecialchars($_POST['price']) . "',
       date ='" . date("Y-m-d H:i:s") . "',
       ticket='" . htmlspecialchars($_POST['card_key']) . "'"
@@ -67,6 +76,8 @@ if (isset($_POST['save_offcase'])) {
          ผู้แจ้ง : $namecall
          สาขา : $location
          รายละเอียด : $detail
+         ------------------------
+         ช่างผู้ดำเนินงาน : $name_mt
          ------------------------
          วันที่: {$date_send}
          เวลา: {$time_send}

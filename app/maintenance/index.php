@@ -267,7 +267,7 @@ include_once 'procress/dataSave.php';
                         <?php
                         $i = 0;
                         // $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID AND card_status NOT IN ('2e34609794290a770cb0349119d78d21','57995055c28df9e82476a54f852bd214') OR card_status IS NULL ORDER BY ticket DESC");
-                        $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "date LIKE '%" . date('Y') . "%' AND card_status NOT IN ('wait_approve') OR card_status IS NULL ORDER BY ticket DESC");
+                        $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "date LIKE '%" . date('Y') . "%' AND card_status NOT IN ('wait_approve','approve','57995055c28df9e82476a54f852bd214') AND work_flag NOT IN ('work_success') OR card_status IS NULL OR card_status = 'approve_do' ORDER BY ticket DESC");
                         while ($show_total = mysqli_fetch_object($get_total)) {
                             $i++;
                         ?>
@@ -305,8 +305,14 @@ include_once 'procress/dataSave.php';
                                     <?php
                                     if (@$show_total->card_status == NULL || @$show_total->card_status == 'approve_do') {
                                         echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
-                                    } else {
-                                        echo @cardStatus($show_total->card_status);
+                                    }  else if ($show_total->card_status == 'reject'){
+                                        echo '<span class="badge badge-danger">ตรวจสอบงานอีกครั้ง</span>';
+                                    }else {
+                                         if ($show_total->card_status == '2e34609794290a770cb0349119d78d21') {
+                                            echo '<span class="badge badge-info">รอตรวจสอบงาน / ปิดงาน</span>';
+                                        } else {
+                                            echo @cardStatus($show_total->card_status);
+                                        }
                                     }
 
                                     ?>
@@ -357,7 +363,7 @@ include_once 'procress/dataSave.php';
                                     } ?>
                                 </td>
                                 <td class="text-center"> <?php echo '
-                <a href="?p=maintenance_case_all_service&key=' . @$show_total->ticket . '" target="_blank" class="btn btn-sm btn-success" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><span class="fa fa-list-ul"></span></a>'; ?>
+                <a href="?p=maintenance_case_all_service&key=' . @$show_total->ticket . '" class="btn btn-sm btn-success" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><span class="fa fa-list-ul"></span></a>'; ?>
 
                                 </td>
                             </tr>

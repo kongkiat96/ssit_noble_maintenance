@@ -27,6 +27,7 @@ $show_case = $getdata->my_sql_query($connect, null, "building_list", "date_updat
                     <td>สาขา</td>
                     <td>วันที่แจ้ง</td>
                     <td>วันที่แล้วเสร็จ</td>
+                    <td>สถานะ</td>
                 </tr>
             </thead>
             <tbody>
@@ -53,6 +54,7 @@ $show_case = $getdata->my_sql_query($connect, null, "building_list", "date_updat
                         <td><?php echo @prefixbranch($showcase->se_location); ?></td>
                         <td><?php echo @dateConvertor($showcase->date); ?></td>
                         <td><?php echo @dateConvertor($showcase->date_update); ?></td>
+                        <td><?php echo @cardStatus($showcase->card_status); ?></td>
                     </tr>
                 <?php } ?>
             </tbody>

@@ -314,7 +314,10 @@ switch (htmlspecialchars($_GET['type'])) {
 		$getdata->my_sql_update($connect, "device_type", "device_status = '2'", "id='" . htmlspecialchars($_GET['key']) . "'");
 		echo '<script>window.history.back();</script>';
 		break;
-
+	case "delete_admin_approve":
+		$getdata->my_sql_update($connect, "list_admin_approve", "deleted = '1'", "id='" . htmlspecialchars($_GET['key']) . "'");
+		echo '<script>window.location="index.php?p=setting_approve";</script>';
+		break;
 
 	case "delete_service_li":
 		$getdata->my_sql_update($connect, "service_list", "se_li_status = '0'", "se_li_id='" . htmlspecialchars($_GET['key']) . "'");

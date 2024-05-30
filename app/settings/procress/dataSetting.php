@@ -321,3 +321,18 @@ if (isset($_POST['save_list_admin_approve'])) {
 		$alert = $warning;
 	}
 }
+
+if (isset($_POST['edit_list_admin_approve'])) {
+	if (!empty(htmlspecialchars($_POST['edit_approve_menu']))) {
+		$getdata->my_sql_update(
+			$connect,
+			"list_admin_approve",
+			"approve_menu = '" . htmlspecialchars($_POST['edit_approve_menu']) . "'",
+			"id = '" . htmlspecialchars($_POST['list_approve_id']) . "'"
+		);
+
+		$alert = $saveedit;
+	} else {
+		$alert = $warning;
+	}
+}

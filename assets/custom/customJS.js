@@ -102,19 +102,16 @@ jQuery(document).ready(function () {
 $(function () {
 
   $('#for-home').DataTable({
-    // dom: 'Bfrtip',
-    dom: '<"row justify-content-between top-information"lf>rt<"row justify-content-between bottom-information"ip><"clear">',
     scrollX: true,
-    searching: true,
-    responsive: true
+    scrollY: true,
   });
 
   $('#ForExport').DataTable({
     dom: 'Bfrtip',
     searching: false,
     pageLength: 50,
-columnDefs: [
-        { targets: 0, visible: false } // ซ่อนคอลัมน์แรก
+    columnDefs: [
+      { targets: 0, visible: false } // ซ่อนคอลัมน์แรก
     ],
     buttons: [
       {

@@ -33,17 +33,26 @@ while ($show_total = mysqli_fetch_object($get_total)) {
                 echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
             } else if ($show_total->card_status == 'wait_approve') {
                 echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
-            } else if ($show_total->card_status == 'approve_do') {
-                echo '<span class="badge badge-info">รอดำเนินการแก้ไข</span>';
+            } else if ($show_total->card_status == 'approve') {
+                echo '<span class="badge badge-primary">รออนุมัติงานซ่อม</span>';
             } else {
-                echo @cardStatus($show_total->card_status);
+                if ($show_total->card_status == 'approve_do') {
+                    echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                } else if ($show_total->card_status == 'reject'){
+                    echo '<span class="badge badge-danger">ตรวจสอบงานอีกครั้ง</span>';
+                }else {
+                    echo @cardStatus($show_total->card_status);
+                }
             }
 
             ?>
         </td>
-        <td><?php
-            if ($show_total->date_update != '0000-00-00') {
+        <td>
+            <?php
+            if ($show_total->date_update != '0000-00-00' && $show_total->card_status != 'wait_approve') {
                 echo @dateConvertor($show_total->date_update);
+            } else if ($show_total->card_status == 'wait_approve' && $show_total->manager_approve_status == 'N') {
+                echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
             } else {
                 echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
             } ?>
@@ -52,7 +61,7 @@ while ($show_total = mysqli_fetch_object($get_total)) {
         <td>
             <?php
             echo '
-                <a href="?p=maintenance_case_all_service&key=' . @$show_total->ticket . '" target="_blank" class="btn btn-sm btn-success" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><i class="fas fa-list"></i></a>';
+                <a href="?p=maintenance_case_all_service&key=' . @$show_total->ticket . '" class="btn btn-sm btn-success" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><i class="fas fa-list"></i></a>';
             ?>
         </td>
 

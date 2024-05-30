@@ -323,8 +323,18 @@ if (isset($_POST['export'])) {
                                     <?php
                                     if (@$show_total->card_status == NULL) {
                                         echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                    } else if ($show_total->card_status == 'wait_approve') {
+                                        echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
+                                    } else if ($show_total->card_status == 'approve') {
+                                        echo '<span class="badge badge-primary">รออนุมัติงานซ่อม</span>';
                                     } else {
-                                        echo @cardStatus($show_total->card_status);
+                                        if ($show_total->card_status == 'approve_do') {
+                                            echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                        } else if ($show_total->card_status == 'reject') {
+                                            echo '<span class="badge badge-danger">ตรวจสอบงานอีกครั้ง</span>';
+                                        } else {
+                                            echo @cardStatus($show_total->card_status);
+                                        }
                                     }
 
                                     ?>
@@ -371,7 +381,9 @@ if (isset($_POST['export'])) {
 
                                 <td>
                                     <?php
-                                    if (@$show_total->admin_update == NULL) {
+                                    if ($show_total->card_status == "57995055c28df9e82476a54f852bd214") {
+                                        echo @cardStatus($show_total->card_status);
+                                    } else if (@$show_total->admin_update == NULL) {
                                         echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
                                     } else {
                                         echo @getemployee($show_total->admin_update);

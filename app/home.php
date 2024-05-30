@@ -4,45 +4,59 @@ require_once 'procress/save_service_building.php';
 echo @$alert;
 ?>
 <script>
-function refreshData() {
-    $.ajax({
-        url: 'auto/sum_case_building.php',
-        success: function(data) {
-            $('#get_sum_building').html(data);
-        }
-    });
-    $.ajax({
-        url: 'auto/table_building_user.php',
-        success: function(data) {
-            $('#get_table_building').html(data);
-        }
-    });
-    $.ajax({
-        url: 'auto/list_approve.php',
-        success: function(data) {
-            $('#list_approve').html(data);
-        }
-    });
-    $.ajax({
-        url: 'auto/list_checkwork.php',
-        success: function(data) {
-            $('#list_checkwork').html(data);
-        }
-    });
+    function refreshData() {
+        $.ajax({
+            url: 'auto/sum_case_building.php',
+            success: function(data) {
+                $('#get_sum_building').html(data);
+            }
+        });
+        $.ajax({
+            url: 'auto/table_building_user.php',
+            success: function(data) {
+                $('#get_table_building').html(data);
+            }
+        });
+        $.ajax({
+            url: 'auto/list_approve.php',
+            success: function(data) {
+                $('#list_approve').html(data);
+            }
+        });
+        $.ajax({
+            url: 'auto/list_checkwork.php',
+            success: function(data) {
+                $('#list_checkwork').html(data);
+            }
+        });
 
-    $.ajax({
-        url: 'auto/list_check.php',
-        success: function(data) {
-            $('#list_check').html(data);
-        }
-    });
-}
+        $.ajax({
+            url: 'auto/list_check.php',
+            success: function(data) {
+                $('#list_check').html(data);
+            }
+        });
 
-$(document).ready(function() {
-    refreshData(); // Call on document ready to load the data initially
-    var refreshInterval = 10000; // Adjust the time interval as needed.
-    setInterval(refreshData, refreshInterval);
-});
+        $.ajax({
+            url: 'auto/list_checkwork_ct.php',
+            success: function(data) {
+                $('#list_checkwork_ct').html(data);
+            }
+        });
+
+        $.ajax({
+            url: 'auto/list_check_ct.php',
+            success: function(data) {
+                $('#list_check_ct').html(data);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        refreshData(); // Call on document ready to load the data initially
+        var refreshInterval = 10000; // Adjust the time interval as needed.
+        setInterval(refreshData, refreshInterval);
+    });
 </script>
 
 
@@ -106,8 +120,23 @@ $(document).ready(function() {
                         </div>
                     </div>
                     <div class="form-group row">
+                        <div class="col-12">
+                            <label for="condition">ข้อมูลการแจ้งการแจ้ง</label>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <input type="radio" name="case" id="case_me" value="me">
+                            <label for="case_me">แจ้งสำหรับตนเอง</label>
+                        </div>
+                        <div class="col-6">
+                            <input type="radio" name="case" id="case_other" value="other">
+                            <label for="case_other">แจ้งให้ผู้อื่น</label>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <div class="col-md-6 col-sm-12">
-                            <label for="namecall">ชื่อผู้แจ้ง</label>
+                            <label for="namecall" id="namecallLabel">เลือกชื่อผู้แจ้ง</label>
                             <!-- <input type="text" name="namecall" id="namecall" class="form-control" required> -->
                             <select name="namecall" id="namecall" class="form-control select2bs4" required style="width: 100%;">
                                 <option value="">--- เลือกข้อมูล ---</option>
@@ -118,18 +147,11 @@ $(document).ready(function() {
                                 ?>
                             </select>
                             <div class="invalid-feedback">
-                                ระบุ ชื่อผู้แจ้ง .
+                                เลือก ข้อมูล .
                             </div>
                         </div>
-                        <!-- <div class="col-md-6 col-sm-12">
-                            <label for="location">สาขา</label>
-                            <input type="text" name="location" id="location" class="form-control" required>
-                            <div class="invalid-feedback">
-                                ระบุ สาขา .
-                            </div>
-                        </div> -->
                         <div class="col-md-6 col-sm-12">
-                            <label for="location">สาขา</label>
+                            <label for="location" id="locationLabel">สาขา</label>
                             <select class="form-control select2bs4" style="width: 100%;" name="location" id="location" required>
                                 <option value="">--- เลือก สาขา ---</option>
                                 <?php
@@ -141,7 +163,7 @@ $(document).ready(function() {
                             </select>
 
                             <div class="invalid-feedback">
-                                ระบุ สาขา.
+                                เลือก สาขา.
                             </div>
                         </div>
                     </div>
@@ -194,7 +216,7 @@ $(document).ready(function() {
         <form method="post" enctype="multipart/form-data" class="was-validated" id="waitsave2">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">เปลี่ยนแปลง</h5>
+                    <h5 class="modal-title">อนุมัติรายการแจ้งซ่อม</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -208,12 +230,38 @@ $(document).ready(function() {
     </div>
 </div>
 
+
+<div class="modal fade" id="reopen_case" role="dialog" aria-labelledby="reopen_case" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate id="waitsave">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">แจ้งงานใหม่อีกครั้ง</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="reopen_case">
+
+                </div>
+                <div class="modal-footer">
+
+                    <button class="ladda-button btn btn-primary btn-square btn-ladda bg-info" type="submit" name="save_reopen_case" data-style="expand-left">
+                        <span class="fas fa-save"> บันทึก</span>
+                        <span class="ladda-spinner"></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="modal fade" id="mt-manager-frm" role="dialog" aria-labelledby="mt-manager-frm" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <form method="post" enctype="multipart/form-data" class="was-validated" id="waitsave2">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">เปลี่ยนแปลง</h5>
+                    <h5 class="modal-title">อนุมัติรายการแจ้งซ่อม</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -318,7 +366,7 @@ $(document).ready(function() {
                 </div>
                 <hr class="w-100">
                 <?php if ($_SESSION['uclass'] == 2 || $_SESSION['uclass'] == 3) { ?>
-                    <?php @$gettoday = $getdata->my_sql_show_rows($connect, "building_list", "ID <> 'hidden' AND (date_update LIKE '%" . date("Y-m-d") . "%' )"); ?>
+                    <?php @$gettoday = $getdata->my_sql_show_rows($connect, "building_list", "date_update LIKE '%" . date("Y-m-d") . "%' AND manager_approve_status = 'Y' AND card_status NOT IN ('wait_approve','approve','33831963cbe86c4e544c5a999984aa7b','57995055c28df9e82476a54f852bd214')"); ?>
                     <?php if ($gettoday >= '1') { ?>
                         <div class="contact-info">
                             <div class="alert alert-danger" role="alert">
@@ -345,19 +393,12 @@ $(document).ready(function() {
                 <ul class="nav nav-pills  px-3 px-xl-5 nav-style-border" id="myTab" role="tablist">
 
                     <li class="nav-item">
-                        <a class="nav-link active" id="building-tab" data-toggle="tab" href="#building" role="tab" aria-controls="building" aria-selected="false">ฝ่ายอาคาร</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="summary-tab" data-toggle="tab" href="#summary" role="tab" aria-controls="summary" aria-selected="true">
-                            ค้นหารายงานแจ้ง</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">เปลี่ยนแปลงข้อมูล</a>
+                        <a class="nav-link active" id="building-tab" data-toggle="tab" href="#building" role="tab" aria-controls="building" aria-selected="false">Ticket ของฉัน</a>
                     </li>
                     <?php
                     $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "manager_user_key = '" . $userdata->user_key . "'");
 
-                    if (COUNT($chkManager->id) >= 1 && $_SESSION['uclass'] != 3) {
+                    if (COUNT($chkManager->id) >= 1) {
                     ?>
                         <li class="nav-item">
                             <a class="nav-link" id="approve-list-tab" data-toggle="tab" href="#approve-list" role="tab" aria-controls="approve-list" aria-selected="false">
@@ -365,15 +406,48 @@ $(document).ready(function() {
                         </li>
                     <?php } ?>
 
-                    <?php if ($_SESSION['uclass'] == 3 && COUNT($chkManager->id) >= 1) { ?>
+                    <?php
+                    $get_list_approve = $getdata->my_sql_query($connect, NULL, "list_admin_approve", "user_key = '" . $userdata->user_key . "' AND deleted = '0'");
+
+                    if ($get_list_approve->approve_menu == 'approve_mts') { ?>
                         <li class="nav-item">
                             <a class="nav-link" id="checkwork-list-tab" data-toggle="tab" href="#checkwork-list" role="tab" aria-controls="checkwork-list" aria-selected="false">
-                                รายการงานอนุมัติซ่อม</a>
+                                รายการงานอนุมัติซ่อม ฝ่ายอาคาร</a>
                         </li>
 
                         <li class="nav-item">
                             <a class="nav-link" id="check-list-tab" data-toggle="tab" href="#check-list" role="tab" aria-controls="check-list" aria-selected="false">
-                                รายการตรวจงานซ่อม</a>
+                                รายการตรวจงานซ่อม ฝ่ายอาคาร</a>
+                        </li>
+                    <?php } else if ($get_list_approve->approve_menu == 'approve_cts') { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" id="checkwork-list-ct-tab" data-toggle="tab" href="#checkwork-list-ct" role="tab" aria-controls="checkwork-list-ct" aria-selected="false">
+                                รายการงานอนุมัติซ่อม เฟอร์นิเจอร์</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" id="check-list-ct-tab" data-toggle="tab" href="#check-list-ct" role="tab" aria-controls="check-list-ct" aria-selected="false">
+                                รายการตรวจงานซ่อม เฟอร์นิเจอร์</a>
+                        </li>
+                    <?php } else if ($get_list_approve->approve_menu == 'approve_all') { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" id="checkwork-list-tab" data-toggle="tab" href="#checkwork-list" role="tab" aria-controls="checkwork-list" aria-selected="false">
+                                รายการงานอนุมัติซ่อม ฝ่ายอาคาร</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" id="check-list-tab" data-toggle="tab" href="#check-list" role="tab" aria-controls="check-list" aria-selected="false">
+                                รายการตรวจงานซ่อม ฝ่ายอาคาร</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" id="checkwork-list-ct-tab" data-toggle="tab" href="#checkwork-list-ct" role="tab" aria-controls="checkwork-list-ct" aria-selected="false">
+                                รายการงานอนุมัติซ่อม เฟอร์นิเจอร์</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" id="check-list-ct-tab" data-toggle="tab" href="#check-list-ct" role="tab" aria-controls="check-list-ct" aria-selected="false">
+                                รายการตรวจงานซ่อม เฟอร์นิเจอร์</a>
                         </li>
                     <?php } ?>
                 </ul>
@@ -521,175 +595,200 @@ $(document).ready(function() {
                         </div>
                     </div>
 
-                    <div class="tab-pane fade" id="summary" role="tabpanel" aria-labelledby="summary-tab">
+                    <div class="tab-pane fade" id="checkwork-list-ct" role="tabpanel" aria-labelledby="checkwork-list-ct-tab">
                         <div class="mt-5">
-                            <div class="responsive-data-table">
-                                <table id="for-home" class="table display nowrap hover" style="font-family: sarabun; font-size: 14px;
-    text-align: center;">
-                                    <thead class="font-weight-bold text-center">
-                                        <tr>
-                                            <td>ลำดับ</td>
-                                            <td>Tickets</td>
-                                            <td>ชื่อผู้แจ้ง</td>
-                                            <td>สาขา</td>
-                                            <td>วันที่แจ้ง</td>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="basic-data-table">
+                                        <table class="table nowrap text-center" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Case ID</th>
+                                                    <th>Ticket</th>
+                                                    <th>Date</th>
+                                                    <th>Time</th>
+                                                    <th>Status</th>
+                                                    <th>Date success</th>
 
-                                            <td>สถานะ</td>
+                                                    <th>จัดการ</th>
+                                                </tr>
+                                            </thead>
 
-                                            <td>วันที่แล้วเสร็จ</td>
-                                            <td>ผู้ดำเนินการ</td>
-                                            <td>ดำเนินการ</td>
+                                            <tbody id="list_checkwork_ct">
 
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        $i = 0;
-                                        if ($_SESSION['uclass'] == 3 || $_SESSION['uclass'] == 2) {
-                                            $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID ORDER BY ID desc LIMIT 20");
-                                        } else {
-                                            $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID AND user_key = '" . $_SESSION['ukey'] . "' ORDER BY ID desc LIMIT 20");
-                                        }
+                                            </tbody>
 
-                                        while ($show_total = mysqli_fetch_object($get_total)) {
-                                            $i++
-                                        ?>
-                                            <tr>
-                                                <td><?php echo $i;
-                                                    @$show_total->ID; ?></td>
-                                                <td><?php echo @$show_total->ticket; ?></td>
-
-
-                                                <td><?php
-                                                    $search = $getdata->my_sql_query($connect, NULL, "employee", "card_key ='" . $show_total->se_namecall . "'");
-                                                    if (COUNT($search) == 0) {
-                                                        $chkName = $show_total->se_namecall;
-                                                    } else {
-                                                        $chkName = getemployee($show_total->se_namecall);
-                                                    }
-
-                                                    echo $chkName;
-                                                    ?></td>
-
-                                                <td><?php echo @prefixbranch($show_total->se_location) ?></td>
-
-
-                                                <td><?php echo @dateConvertor($show_total->date); ?></td>
-
-
-                                                <td class="text-center">
-                                                    <?php
-                                                    if (@$show_total->card_status == NULL) {
-                                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
-                                                    } else if ($show_total->card_status == 'wait_approve') {
-                                                        echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
-                                                    } else {
-                                                        echo @cardStatus($show_total->card_status);
-                                                    }
-
-                                                    ?>
-                                                </td>
-
-                                                <td class="text-center">
-                                                    <?php
-                                                    if ($show_total->date_update != "0000-00-00" && $show_total->card_status != "57995055c28df9e82476a54f852bd214") {
-                                                        echo @dateConvertor($show_total->date_update);
-                                                    } elseif ($show_total->card_status == "57995055c28df9e82476a54f852bd214") {
-                                                        echo @cardStatus($show_total->card_status);
-                                                    } else {
-                                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
-                                                    }
-                                                    ?>
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                    if (@$show_total->admin_update == NULL) {
-                                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
-                                                    } else {
-                                                        echo @getemployee($show_total->admin_update);
-                                                    }
-
-                                                    ?>
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                    echo '<a href="#" data-toggle="modal" data-target="#show_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-info" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><i class="fa fa-search"></i></a>&nbsp';
-                                                    echo '<a href="?p=maintenance_case_all_service&key=' . @$show_total->ticket . '" target="_blank" class="btn btn-sm btn-success" data-top="toptitle" data-placement="top" title="ประวัติดำเนินงาน"><span class="fa fa-list-ul"></span></a>&nbsp';
-                                                    ?>
-                                                    <a href="maintenance/print_work.php?key=<?php echo @$show_total->ticket; ?>" target="_blank" class="btn btn-sm btn-outline-danger" data-toggle="toptitle" data-placement="top" title="พิมพ์ใบงาน"><i class="fa fa-print"></i></a>
-                                                    <?php if ($_SESSION['uclass'] == '3' || $_SESSION['uclass'] == '2') {
-                                                        echo '<a href="#" data-toggle="modal" data-target="#edit_case" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-secondary  btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-edit"></i></a>';
-                                                    }
-                                                    ?>
-                                                </td>
-
-
-
-                                            </tr>
-                                        <?php
-                                        }
-                                        ?>
-                                    </tbody>
-                                </table>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                    <div class="tab-pane fade" id="check-list-ct" role="tabpanel" aria-labelledby="check-list-ct-tab">
                         <div class="mt-5">
-                            <form method="post" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="basic-data-table">
+                                        <table class="table nowrap text-center" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Case ID</th>
+                                                    <th>Ticket</th>
+                                                    <th>Date</th>
+                                                    <th>Time</th>
+                                                    <th>Status</th>
+                                                    <th>Date success</th>
 
-                                <div class="row mb-2">
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="firstName">ชื่อ</label>
-                                            <input type="text" class="form-control" id="firstName" value="<?php echo @$userdata->name; ?>" disabled>
-                                        </div>
+                                                    <th>จัดการ</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody id="list_check_ct">
+
+                                            </tbody>
+
+                                        </table>
                                     </div>
-
-                                    <div class="col-lg-6">
-                                        <div class="form-group">
-                                            <label for="lastName">นามสกุล</label>
-                                            <input type="text" class="form-control" id="lastName" value="<?php echo @$userdata->lastname; ?>" disabled>
-                                        </div>
-                                    </div>
                                 </div>
-
-                                <div class="form-group mb-4">
-                                    <label for="userName">User ID</label>
-                                    <input type="text" class="form-control" id="userName" value="<?php echo @$userdata->username; ?>" disabled>
-                                </div>
-
-                                <div class="form-group mb-4">
-                                    <label for="email">Email</label>
-                                    <input type="email" class="form-control" name="email" id="email" value="<?php echo @$userdata->email; ?>">
-                                </div>
-
-                                <div class="form-group mb-4">
-                                    <label for="old_password">Old password</label>
-                                    <input type="password" class="form-control" name="old_password" id="old_password">
-                                </div>
-
-                                <div class="form-group mb-4">
-                                    <label for="new_password">New password</label>
-                                    <input type="password" class="form-control" name="new_password" id="new_password">
-                                </div>
-
-                                <div class="form-group mb-4">
-                                    <label for="re_new_password">Confirm password</label>
-                                    <input type="password" class="form-control" name="re_new_password" id="re_new_password">
-                                </div>
-
-                                <div class="d-flex justify-content-end mt-5">
-                                    <button type="submit" class="btn btn-outline-primary mb-2 btn-pill" name="password_edit"><span class="fas fa-key"></span> Update Password</button>&nbsp;
-                                    <button type="submit" class="btn btn-outline-warning mb-2 btn-pill" name="email_edit"><span class="fas fa-envelope"></span> Update Email</button>
-                                </div>
-
-                            </form>
+                            </div>
                         </div>
                     </div>
+
+
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<hr class="sidebar-divider d-none d-md-block">
+<div class="card">
+    <div class="card-header">
+        <h5>Ticket ของทีม</h5>
+    </div>
+    <div class="card-body m-3">
+        <div class="responsive-data-table-home">
+            <table id="for-home" class="table dt-responsive display nowrap hover" style="font-family: sarabun; font-size: 14px; text-align: center;" width="100%">
+                <thead class="font-weight-bold text-center">
+                    <tr>
+                        <td>ลำดับ</td>
+                        <td>Tickets</td>
+                        <td>ชื่อผู้แจ้ง</td>
+                        <td>สาขา</td>
+                        <td>วันที่แจ้ง</td>
+
+                        <td>สถานะ</td>
+
+                        <td>วันที่แล้วเสร็จ</td>
+                        <td>ผู้ดำเนินการ</td>
+                        <td>ดำเนินการ</td>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $i = 0;
+                    if ($_SESSION['uclass'] == 3 || $_SESSION['uclass'] == 2) {
+                        $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "card_status NOT IN ('wait_approve','approve') AND manager_approve_status = 'Y' ORDER BY ID desc LIMIT 100");
+                    } else {
+                        $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "card_status NOT IN ('wait_approve','approve') AND manager_approve_status = 'Y' AND (user_key = '" . $_SESSION['ukey'] . "' OR manager_approve = '" . $_SESSION['ukey'] . "') ORDER BY ID desc LIMIT 100");
+                    }
+
+                    while ($show_total = mysqli_fetch_object($get_total)) {
+                        $i++
+                    ?>
+                        <tr>
+                            <td><?php echo $i;
+                                @$show_total->ID; ?></td>
+                            <td><?php echo @$show_total->ticket; ?></td>
+
+
+                            <td><?php
+                                $search = $getdata->my_sql_query($connect, NULL, "employee", "card_key ='" . $show_total->se_namecall . "'");
+                                if (COUNT($search) == 0) {
+                                    $chkName = $show_total->se_namecall;
+                                } else {
+                                    $chkName = getemployee($show_total->se_namecall);
+                                }
+
+                                echo $chkName;
+                                ?></td>
+
+                            <td><?php echo @prefixbranch($show_total->se_location) ?></td>
+
+
+                            <td><?php echo @dateConvertor($show_total->date); ?></td>
+
+
+                            <td class="text-center">
+                                <?php
+                                if (@$show_total->card_status == NULL) {
+                                    echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                } else if ($show_total->card_status == 'wait_approve') {
+                                    echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
+                                } else if ($show_total->card_status == 'approve') {
+                                    echo '<span class="badge badge-primary">รออนุมัติงานซ่อม</span>';
+                                } else if ($show_total->card_status == '2e34609794290a770cb0349119d78d21') {
+                                    echo '<span class="badge badge-info">รอตรวจสอบงาน / ปิดงาน</span>';
+                                } else {
+                                    if ($show_total->card_status == 'approve_do') {
+                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                    } else if ($show_total->card_status == 'reject') {
+                                        echo '<span class="badge badge-danger">ตรวจสอบงานอีกครั้ง</span>';
+                                    } else {
+                                        echo @cardStatus($show_total->card_status);
+                                    }
+                                }
+
+                                ?>
+                            </td>
+
+                            <td class="text-center">
+                                <?php
+                                if ($show_total->date_update != "0000-00-00" && $show_total->card_status != "57995055c28df9e82476a54f852bd214") {
+                                    echo @dateConvertor($show_total->date_update);
+                                } else if ($show_total->card_status == "57995055c28df9e82476a54f852bd214") {
+                                    echo @cardStatus($show_total->card_status);
+                                } else {
+                                    echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                }
+                                ?>
+                            </td>
+                            <td>
+                                <?php
+                                if ($show_total->card_status == "57995055c28df9e82476a54f852bd214") {
+                                    echo @cardStatus($show_total->card_status);
+                                } else if (@$show_total->admin_update == NULL) {
+                                    echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                } else {
+                                    echo @getemployee($show_total->admin_update);
+                                }
+
+                                ?>
+                            </td>
+                            <td>
+                                <?php if ($show_total->card_status == '57995055c28df9e82476a54f852bd214') {
+                                    echo '<a href="#" data-toggle="modal" data-target="#reopen_case" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-danger  btn-outline" title="แจ้งงานอีกครั้ง"><i class="fa fa-retweet"></i></a>';
+                                } ?>
+                                <?php
+                                echo '<a href="#" data-toggle="modal" data-target="#show_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-info" title="ตรวจสอบ"><i class="fa fa-search"></i></a>&nbsp';
+                                echo '<a href="?p=maintenance_case_all_service&key=' . @$show_total->ticket . '" class="btn btn-sm btn-success" title="ประวัติดำเนินงาน"><span class="fa fa-list-ul"></span></a>&nbsp';
+                                ?>
+                                <a href="maintenance/print_work.php?key=<?php echo @$show_total->ticket; ?>" target="_blank" class="btn btn-sm btn-outline-danger" title="พิมพ์ใบงาน"><i class="fa fa-print"></i></a>
+                                <?php if ($_SESSION['uclass'] == '3' || $_SESSION['uclass'] == '2') {
+                                    echo '<a href="#" data-toggle="modal" data-target="#edit_case" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-secondary  btn-outline" title="ดำเนินการ"><i class="fa fa-edit"></i></a>';
+                                }
+                                ?>
+                            </td>
+
+
+
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -704,6 +803,46 @@ $(document).ready(function() {
             }, function(data) {
                 // แสดงผลลัพธ์ใน input
                 $("#approve").val(data);
+            });
+        });
+    });
+    $(".old_password, .new_password, .conf_password").click(function() {
+        $(this).toggleClass("fa-eye fa-eye-slash");
+        var input = $($(this).attr("toggle"));
+        input.attr("type", input.attr("type") === "password" ? "text" : "password");
+    });
+
+    $('#reopen_case').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('whatever') // Extract info from data-* attributes
+            var modal = $(this);
+            var dataString = 'key=' + recipient;
+
+            $.ajax({
+                type: "GET",
+                url: "otherfrm/reopen_case.php",
+                data: dataString,
+                cache: false,
+                success: function(data) {
+                    modal.find('.reopen_case').html(data);
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // เรียกฟังก์ชันเมื่อมีการเปลี่ยนแปลงใน radio buttons
+        document.querySelectorAll('input[type=radio][name="case"]').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                if (this.value === 'me') {
+                    document.getElementById('namecallLabel').innerText = 'เลือกชื่อผู้แจ้ง';
+                    document.getElementById('locationLabel').innerText = 'สาขา';
+                } else if (this.value === 'other') {
+                    document.getElementById('namecallLabel').innerText = 'เลือกชื่อผู้ที่จะแจ้งให้';
+                    document.getElementById('locationLabel').innerText = 'สาขาที่จะแจ้ง';
+                }
             });
         });
     });

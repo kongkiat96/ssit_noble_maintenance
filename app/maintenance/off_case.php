@@ -28,10 +28,10 @@ $get_admin = $getdata->my_sql_query($connect, NULL, "user", "user_key = '" . $_S
           echo '<option value="57995055c28df9e82476a54f852bd214">ยกเลิกการแจ้ง</option>';
           echo '<option value="5cafc78523f4f5e4812f9545b2ba5ae7">แจ้งดำเนินการอีกครั้ง</option>';
         } else {
-          while ($show_status = mysqli_fetch_object($select_status)) {
-            if ($show_status->ctype_key == $chk_case->card_status) {
-              echo '<option value="' . $show_status->ctype_key . '" selected>' . $show_status->ctype_name . '</option>';
-            } else {
+          if ($chk_case->card_status == '33831963cbe86c4e544c5a999984aa7b') {
+            echo '<option value="33831963cbe86c4e544c5a999984aa7b" selected>ดำเนินการเสร็จสิ้น</option>';
+          } else {
+            while ($show_status = mysqli_fetch_object($select_status)) {
               echo '<option value="' . $show_status->ctype_key . '">' . $show_status->ctype_name . '</option>';
             }
           }
@@ -80,10 +80,22 @@ $get_admin = $getdata->my_sql_query($connect, NULL, "user", "user_key = '" . $_S
     </div>
   </div>
 
-  <div class="form-group row col-12">
+  <div class="form-group row">
+    <div class="col-12">
       <label for="name_mt">ชื่อช่างผู้ดำเนินงาน</label>
-      <input type="text" class="form-control" name="name_mt" id="name_mt" value="<?php echo @$chk_case->name_mt; ?>">
+      <select class="form-control select2bs4" name="name_mt[]" multiple="multiple">
+        <?php
+        $chk_case_name_mt = explode(",", $chk_case->name_mt);
+        $getuser = $getdata->my_sql_select($connect, NULL, "user", "user_status = '1' AND user_class = '2'");
+        while ($showUser = mysqli_fetch_object($getuser)) {
+          $selected = (in_array(getemployee($showUser->user_key), $chk_case_name_mt)) ? 'selected' : '';
+          echo '<option value="' . getemployee($showUser->user_key) . '" ' . $selected . '>' . getemployee($showUser->user_key) . '</option>';
+        }
+
+        ?>
+      </select>
     </div>
+  </div>
 
   <div class="form-group row">
     <div class="col-md-6 col-sm-12">
@@ -115,6 +127,7 @@ $get_admin = $getdata->my_sql_query($connect, NULL, "user", "user_key = '" . $_S
 <input type="text" name="namecall" hidden value="<?php echo $chk_case->se_namecall; ?>">
 <input type="text" name="location" hidden value="<?php echo $chk_case->se_location; ?>">
 <input type="text" name="detail" hidden value="<?php echo $chk_case->se_other; ?>">
+<input type="text" hidden name="work_flag" id="work_flag" value="<?php echo $chk_case->work_flag;?>">
 <?php if ($chk_case->se_after != NULL) { ?>
   <input type="text" name="pic_log" value="<?php echo $chk_case->se_after; ?>">
 <?php } ?>

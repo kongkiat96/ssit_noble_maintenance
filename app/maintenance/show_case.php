@@ -99,12 +99,6 @@ $chk_case = $getdata->my_sql_query($connect, NULL, "building_list", "ticket='" .
             </div>
           <?php } ?>
           <div class="form-group row">
-            <div class="col-12">
-              <label for="se_asset">รหัสสินทรัพย์</label>
-              <input type="text" name="se_asset" id="se_asset" class="form-control" readonly value="<?php echo $chk_case->se_asset; ?>">
-            </div>
-          </div>
-          <div class="form-group row">
             <div class="col-md-6 col-sm-12">
               <label for="namecall">ชื่อผู้แจ้ง</label>
               <?php

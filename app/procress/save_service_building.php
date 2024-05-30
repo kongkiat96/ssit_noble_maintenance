@@ -22,27 +22,18 @@ if (isset($_POST['save_casebu'])) {
             if (move_uploaded_file($File_tmpname, (pic . $fixname_pic)));
         }
 
-
         resizepic($pic, $fixname_pic);
 
+        // $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "user_key = '" . $_SESSION['ukey'] . "'");
 
-        //     $getdata->my_sql_insert($connect, "building_list", "
-        // ticket='" . $runticket_bu . "',
-        // user_key ='" . $_SESSION['ukey'] . "',
-        // department ='" . htmlspecialchars($_POST['department']) . "',
-        // company = '" . htmlspecialchars($_POST['company']) . "',
-        // se_id ='" . htmlspecialchars($_POST['se_id']) . "',
-        // se_li_id ='" . htmlspecialchars($_POST['service_list']) . "',
-        // as_code = '" . htmlspecialchars($_POST['as_code']) . "',
-        // pic_before = '" . $fixname_pic . "',
-        // se_other = '" . htmlspecialchars($_POST['other']) . "',
-        // se_namecall = '" . htmlspecialchars($_POST['namecall']) . "',
-        // se_approve = '" . htmlspecialchars($_POST['approve']) . "',
-        // se_location = '" . htmlspecialchars($_POST['location']) . "',
-        // date = '" . date("Y-m-d") . "',
-        // time_start = '" . date("H:i:s") . "'");
+        if ($_POST['case'] == 'me') {
+            $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "user_key = '" . $_SESSION['ukey'] . "'");
+        } else if ($_POST['case'] == 'other') {
+            $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "user_key = '" . $_POST['namecall'] . "'");
+        } else {
+            $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "user_key = '" . $_SESSION['ukey'] . "'");
+        }
 
-        $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "user_key = '" . $_SESSION['ukey'] . "'");
         if (COUNT($chkManager) == 0) {
             $getdata->my_sql_insert($connect, "building_list", "
         ticket='" . $runticket_bu . "',
@@ -211,7 +202,7 @@ if (isset($_POST['save_editcase'])) {
 
 if (isset($_POST['save_approve'])) {
     if (!empty($_POST['approve_status'])) {
-        $getFlag = $_POST['approve_status'] == "Y" ? null : $_POST['approve_status'];
+        $getFlag = $_POST['approve_status'] == "Y" ? 'approve' : $_POST['approve_status'];
         $getdata->my_sql_update(
             $connect,
             "building_list",
@@ -225,7 +216,7 @@ if (isset($_POST['save_approve'])) {
         $getdata->my_sql_insert(
             $connect,
             "building_comment",
-            "card_status='" . htmlspecialchars($_POST['off_case_status']) . "',
+            "card_status='" . $getFlag . "',
       admin_update='" . $name_key . "',
       comment='" . htmlspecialchars($_POST['comment']) . "',
       date ='" . date("Y-m-d H:i:s") . "',
@@ -321,12 +312,23 @@ if (isset($_POST['save_approve_do'])) {
 
 if (isset($_POST['save_approve_success'])) {
     if (!empty($_POST['approve_status'])) {
-        $getFlag = $_POST['approve_status'] == "Y" ? '33831963cbe86c4e544c5a999984aa7b' : $_POST['approve_status'];
+        // $getFlag = $_POST['approve_status'] == "Y" ? '33831963cbe86c4e544c5a999984aa7b' : $_POST['approve_status'];
+
+        if ($_POST['approve_status'] == "Y") {
+            $getFlag = '33831963cbe86c4e544c5a999984aa7b';
+            $work_flag = 'success';
+            $mapText = " - ตรวจสอบงานเสร็จสิ้น";
+        } else {
+            $getFlag = 'reject';
+            $work_flag = null;
+            $mapText = " - ตรวจสอบงานไม่เรียบร้อย";
+        }
+
         $getdata->my_sql_update(
             $connect,
             "building_list",
             "card_status='" . $getFlag . "',
-            manager_approve_status = 'Y',
+            work_flag = '" . $work_flag . "',
       date_update='" . date("Y-m-d") . "',
       time_update='" . date("H:i:s") . "'", //เพิ่ม เวลา
             "ticket='" . htmlspecialchars($_POST['card_key']) . "'"
@@ -335,9 +337,9 @@ if (isset($_POST['save_approve_success'])) {
         $getdata->my_sql_insert(
             $connect,
             "building_comment",
-            "card_status='" . htmlspecialchars($_POST['off_case_status']) . "',
+            "card_status='" . $getFlag . "',
       admin_update='" . $name_key . "',
-      comment='" . htmlspecialchars($_POST['comment']) . "',
+      comment='" . $_POST['comment'] . $mapText . "',
       date ='" . date("Y-m-d H:i:s") . "',
       ticket='" . htmlspecialchars($_POST['card_key']) . "'"
         );
@@ -361,6 +363,65 @@ if (isset($_POST['save_approve_success'])) {
          ผู้ดำเนินการ : $name_admin
          สถานะ :  ดำเนินงานเรียบร้อย
          ผู้แจ้ง : $namecall
+         สาขา : $location
+         รายละเอียด : $detail
+         ------------------------
+         วันที่: {$date_send}
+         เวลา: {$time_send}
+         ";
+
+        lineNotify($line_text, $line_token); // เรียกใช้ Functions line
+
+        $alert = $success;
+    }
+}
+
+if (isset($_POST['save_reopen_case'])) {
+    if (!empty($_POST['reopen_case'])) {
+        if ($_POST['reopen_case'] == 'Y') {
+            $getFlag = "wait_approve";
+            $status = 'แจ้งดำเนินงานจากผู้ใช้งานอีกครั้ง';
+            $detail = $_POST['comment'] . ' - ' . $status;
+            $work_flag = 'work_success';
+        }
+        $getdata->my_sql_update(
+            $connect,
+            "building_list",
+            "card_status='" . $getFlag . "',
+            work_flag = '" . $work_flag . "'",
+
+            "ticket='" . htmlspecialchars($_POST['card_key']) . "'"
+        );
+
+        $getdata->my_sql_insert(
+            $connect,
+            "building_comment",
+            "card_status='" . $getFlag . "',
+      admin_update='" . $name_key . "',
+      comment='" . $detail . "',
+      date ='" . date("Y-m-d H:i:s") . "',
+      ticket='" . htmlspecialchars($_POST['card_key']) . "'"
+        );
+
+
+        // ส่งข้อมูลเข้าไลน์
+        $ticket = $_POST['ticket'];
+        $name_admin = $_POST['admin'];
+
+        // $status = $_POST['off_case_status'];
+        $date_send = date('d/m/Y');
+        $time_send = date("H:i");
+        $namecall = $_POST['namecall'];
+        $location = $_POST['location'];
+        $detail = $_POST['detail'];
+        $line_token = $getalert->alert_line_token; // Token
+        $line_text = "
+         /*** " . $status . " ***/
+         ------------------------
+         Ticket : $ticket
+         ------------------------
+         สถานะ :  $status 
+         ผู้แจ้ง : " . $namecall . "
          สาขา : $location
          รายละเอียด : $detail
          ------------------------

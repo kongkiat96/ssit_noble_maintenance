@@ -46,8 +46,8 @@
                         <select name="approve_menu" id="approve_menu" class="form-control select2bs4" width="100%" required>
                             <option value="">--- เลือก เมนูรายการอนุมัติ ---</option>
                             <option value="approve_all">เลือกทั้งหมด</option>
-                            <option value="approve_it">กลุ่มงาน IT</option>
-                            <option value="approve_cctv">กลุ่มงาน CCTV</option>
+                            <option value="approve_mts">กลุ่มงาน ฝ่ายอาคาร</option>
+                            <option value="approve_cts">กลุ่มงาน เฟอร์นิเจอร์</option>
 
                         </select>
                         <div class="invalid-feedback">
@@ -137,10 +137,10 @@
                                                 <?php
                                                 if ($showlist_admin->approve_menu == 'approve_all') {
                                                     echo '<span class="badge bg-info">เข้าถึงทั้งหมด</span>';
-                                                } else if ($showlist_admin->approve_menu == 'approve_it') {
-                                                    echo '<span class="badge bg-primary">กลุ่มงาน IT</span>';
+                                                } else if ($showlist_admin->approve_menu == 'approve_mts') {
+                                                    echo '<span class="badge bg-primary">กลุ่มงาน ฝ่ายอาคาร</span>';
                                                 } else {
-                                                    echo '<span class="badge bg-warning">กลุ่มงาน CCTV</span>';
+                                                    echo '<span class="badge bg-warning">กลุ่มงาน เฟอร์นิเจอร์</span>';
                                                 }
                                                 ?>
                                             </td>

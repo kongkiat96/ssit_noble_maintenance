@@ -67,6 +67,15 @@ date_default_timezone_set('Asia/Bangkok');
     .logo-fill-blue {
       fill: #7dffb6;
     }
+
+    .field-icon {
+      float: right;
+      margin-left: -25px;
+      margin-top: -25px;
+      position: relative;
+      z-index: 2;
+      margin-right: 10px;
+    }
   </style>
 
 </head>
@@ -114,6 +123,8 @@ date_default_timezone_set('Asia/Bangkok');
               }
             }
             ?>
+            <li class="has-sub"> <a class="sidenav-item-link" target="_blank" href="https://its.nbrest.com/app/index.php"><i class="fas fa-link"></i><span>แจ้งปัญหาฝ่าย IT</span></a></li>
+
           </ul>
 
 
@@ -148,47 +159,6 @@ date_default_timezone_set('Asia/Bangkok');
 
           <div class="navbar-right ">
             <ul class="nav navbar-nav">
-              <li class="dropdown notifications-menu">
-                <button class="dropdown-toggle" data-toggle="dropdown">
-                  <i class="fas fa-bell"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-right">
-                  <li class="dropdown-header">You have 1 notifications</li>
-                  <li>
-                    <a href="#">
-                      <i class="mdi mdi-text-to-speech"></i> New user registered
-                      <span class=" font-size-12 d-inline-block float-right"><i class="mdi mdi-clock-outline"></i> 10 AM</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="mdi mdi-account-remove"></i> User deleted
-                      <span class=" font-size-12 d-inline-block float-right"><i class="mdi mdi-clock-outline"></i> 07 AM</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="mdi mdi-chart-areaspline"></i> Sales report is ready
-                      <span class=" font-size-12 d-inline-block float-right"><i class="mdi mdi-clock-outline"></i> 12 PM</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="mdi mdi-account-supervisor"></i> New client
-                      <span class=" font-size-12 d-inline-block float-right"><i class="mdi mdi-clock-outline"></i> 10 AM</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <i class="mdi mdi-server-network-off"></i> Server overloaded
-                      <span class=" font-size-12 d-inline-block float-right"><i class="mdi mdi-clock-outline"></i> 05 AM</span>
-                    </a>
-                  </li>
-                  <li class="dropdown-footer">
-                    <a class="text-center" href="#"> View All </a>
-                  </li>
-                </ul>
-              </li>
               <!-- User Account -->
               <li class="dropdown user-menu">
                 <button href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
@@ -203,7 +173,9 @@ date_default_timezone_set('Asia/Bangkok');
                       <?php echo @$userdata->name . '&nbsp;' . $userdata->lastname; ?><small class="pt-1"><?php echo @$userdata->email; ?></small>
                     </div>
                   </li>
-
+                  <li>
+                    <a href="?p=view_info"> <i class="mdi mdi-account-edit"></i> เปลี่ยนแปลงข้อมูล </a>
+                  </li>
                   <li>
                     <a href="../core/logout.core.php"> <i class="mdi mdi-logout"></i> Log Out </a>
                   </li>

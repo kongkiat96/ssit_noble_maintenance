@@ -17,7 +17,7 @@ date_default_timezone_set('Asia/Bangkok');
 
 <?php
 $i = 0;
-$get_total = $getdata->my_sql_select($connect, NULL, "building_list", "card_status IN ('','2e34609794290a770cb0349119d78d21',null) OR manager_approve = '" . $_SESSION['ukey'] . "'ORDER BY ticket DESC LIMIT 10");
+$get_total = $getdata->my_sql_select($connect, NULL, "building_list", "card_status IN ('approve') AND se_id NOT IN ('24') ORDER BY ticket DESC LIMIT 10");
 while ($show_total = mysqli_fetch_object($get_total)) {
     $i++;
 ?>
@@ -27,15 +27,13 @@ while ($show_total = mysqli_fetch_object($get_total)) {
         <td><?php echo @dateConvertor($show_total->date); ?></td>
         <td><?php echo $show_total->time_start; ?></td>
         <td>
-            <?php
+        <?php
             if (@$show_total->card_status == NULL) {
                 echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
-            } else if ($show_total->card_status == 'approve_do') {
-                echo '<span class="badge badge-info">รอดำเนินการแก้ไข</span>';
-            } else if ($show_total->card_status == '2e34609794290a770cb0349119d78d21') {
-                echo '<span class="badge badge-info">รอปิดงาน</span>';
-            } else if ($show_total->card_status == 'wait_approve') {
+            } else if ($show_total->card_status == 'wait_approve'){
                 echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
+            } else if ($show_total->card_status == 'approve'){
+                echo '<span class="badge badge-info">รออนุมัติงานซ่อม</span>';
             } else {
                 echo @cardStatus($show_total->card_status);
             }
@@ -43,9 +41,12 @@ while ($show_total = mysqli_fetch_object($get_total)) {
             ?>
         </td>
 
-        <td><?php
-            if ($show_total->date_update != '0000-00-00') {
+        <td>
+            <?php
+            if ($show_total->date_update != '0000-00-00' && $show_total->card_status != 'wait_approve') {
                 echo @dateConvertor($show_total->date_update);
+            } else if ($show_total->card_status == 'wait_approve') {
+                echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
             } else {
                 echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
             } ?>
@@ -55,7 +56,7 @@ while ($show_total = mysqli_fetch_object($get_total)) {
             <?php
             // echo '
             //     <a href="?p=case_all_service&key=' . @$show_total->ticket . '" target="_blank" class="btn btn-sm btn-success" data-top="toptitle" data-placement="top" title="อนุมัติ"><i class="fas fa-user-check"></i></a>';
-            if (in_array($show_total->card_status, ['wait_approve', null])) {
+            if (in_array($show_total->card_status, ['approve'])) {
                 echo '<a href="#" data-toggle="modal" data-target="#mt-manager-frm" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-warning btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
             }
             ?>
