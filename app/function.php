@@ -359,4 +359,17 @@ switch (htmlspecialchars($_GET['type'])) {
 			echo @number_format($card_count);
 		}
 		break;
+
+	case "delete_branch":
+		$getdata->my_sql_update($connect, "branch", "status = '2'", "id='" . htmlspecialchars($_GET['key']) . "'");
+		echo '<script>window.history.back();</script>';
+		break;
+
+	case "change_using_branch":
+		if (htmlspecialchars($_GET['sts']) == "1") {
+			$getdata->my_sql_update($connect, "branch", "status = '0'", "id='" . htmlspecialchars($_GET['key']) . "'");
+		} else {
+			$getdata->my_sql_update($connect, "branch", "status = '1'", "id='" . htmlspecialchars($_GET['key']) . "'");
+		}
+		break;
 }

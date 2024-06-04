@@ -240,7 +240,7 @@ if (isset($_POST['save_approve'])) {
          Ticket : $ticket
          ------------------------
          ผู้ดำเนินการ : $name_admin
-         สถานะ :  " . @cardStatus_for_line($status) . " 
+         สถานะ :  อนุมัติจากผู้บังคับบัญชา
          ผู้แจ้ง : $namecall
          สาขา : $location
          รายละเอียด : $detail

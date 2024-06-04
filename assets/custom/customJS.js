@@ -585,6 +585,26 @@ $(function () {
     });
   });
 
+  $('#edit_branch').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var recipient = button.data('whatever') // Extract info from data-* attributes
+    var modal = $(this);
+    var dataString = 'key=' + recipient;
+
+    $.ajax({
+      type: "GET",
+      url: "settings/edit/edit_branch.php",
+      data: dataString,
+      cache: false,
+      success: function (data) {
+        modal.find('.edit_branch').html(data);
+      },
+      error: function (err) {
+        console.log(err);
+      }
+    });
+  })
+
   $('#edit_detail').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget) // Button that triggered the modal
     var recipient = button.data('whatever') // Extract info from data-* attributes
@@ -1520,6 +1540,27 @@ function changeUsingdep(department) {
   xmlhttp.send();
 }
 
+function deletebranch(branch) {
+  Swal.fire({
+    title: 'คุณต้องการลบสาขานี้ใช่หรือไม่',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'ยืนยันการลบ',
+    cancelButtonText: 'ยกเลิก'
+  }).then((result) => {
+    if (result.value) {
+      Swal.fire({
+        title: "Deleted !!!",
+        html: "<h4>กำลังลบข้อมูล...</h4>",
+        showConfirmButton: false
+      })
+      window.location = "function.php?type=delete_branch&key=" + branch;
+    }
+  })
+}
+
 function changeUsingdevice(device) {
   if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
     xmlhttp = new XMLHttpRequest();
@@ -1548,6 +1589,37 @@ function changeUsingdevice(device) {
   }
 
   xmlhttp.open("GET", "function.php?type=change_using_device&key=" + device + "&sts=" + sts, true);
+  xmlhttp.send();
+}
+
+function changeUsingbranch(branchkey) {
+  if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+    xmlhttp = new XMLHttpRequest();
+  } else { // code for IE6, IE5
+    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+  }
+  var es = document.getElementById('btn-' + branchkey);
+  if (es.className == 'btn btn-success btn-sm') {
+    var sts = 1;
+  } else {
+    var sts = 0;
+  }
+  xmlhttp.onreadystatechange = function () {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+
+      if (es.className == 'btn btn-success btn-sm') {
+        document.getElementById('btn-' + branchkey).className = 'btn btn-danger btn-sm';
+        document.getElementById('icon-' + branchkey).className = 'fa fa-lock';
+        document.getElementById('text-' + branchkey).innerHTML = 'ซ่อน';
+      } else {
+        document.getElementById('btn-' + branchkey).className = 'btn btn-success btn-sm';
+        document.getElementById('icon-' + branchkey).className = 'fa fa-unlock-alt';
+        document.getElementById('text-' + branchkey).innerHTML = 'แสดง';
+      }
+    }
+  }
+
+  xmlhttp.open("GET", "function.php?type=change_using_branch&key=" + branchkey + "&sts=" + sts, true);
   xmlhttp.send();
 }
 

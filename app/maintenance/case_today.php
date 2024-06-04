@@ -324,190 +324,222 @@ if (isset($_POST['search'])) {
                     </thead>
                     <?php if (isset($_POST['search'])) { ?>
                         <tbody>
-                            <?php
-                            $i = 0;
-                            $get_total = $getquery;
-                            while ($show_total = mysqli_fetch_object($get_total)) {
-                                $i++;
-                            ?>
-                                <tr>
-                                    <td><?php echo @$i; ?></td>
-                                    <td><?php echo @$show_total->ticket; ?></td>
+                        <?php
+                        $i = 0;
+                        // $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID AND card_status NOT IN ('2e34609794290a770cb0349119d78d21','57995055c28df9e82476a54f852bd214') OR card_status IS NULL ORDER BY ticket DESC");
+                        $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "date LIKE '%" . date('Y') . "%' AND card_status NOT IN ('wait_approve','approve','57995055c28df9e82476a54f852bd214') AND work_flag NOT IN ('work_success') OR card_status IS NULL OR card_status = 'approve_do' ORDER BY ticket DESC");
+                        while ($show_total = mysqli_fetch_object($get_total)) {
+                            $i++;
+                        ?>
+                            <tr>
+                                <td><?php echo @$i; ?></td>
+                                <td><?php echo @$show_total->ticket; ?></td>
 
-                                    <!-- <td><?php echo @getemployee($show_total->user_key); ?></td> -->
-                                    <td><?php echo $show_total->se_namecall; ?></td>
-                                    <!-- <td><?php echo @getemployee_department($show_total->user_key); ?></td> -->
-                                    <td><?php echo @prefixbranch($show_total->se_location) ?></td>
+                                <!-- <td><?php echo @getemployee($show_total->user_key); ?></td> -->
+                                <td><?php
+                                    $search = $getdata->my_sql_query($connect, NULL, "employee", "card_key ='" . $show_total->se_namecall . "'");
+                                    if (COUNT($search) == 0) {
+                                        $chkName = $show_total->se_namecall;
+                                    } else {
+                                        $chkName = getemployee($show_total->se_namecall);
+                                    }
+
+                                    echo $chkName;
+                                    ?></td>
+                                <!-- <td><?php echo @getemployee_department($show_total->user_key); ?></td> -->
+                                <td><?php echo @prefixbranch($show_total->se_location) ?></td>
 
 
-                                    <td><?php echo @dateConvertor($show_total->date); ?></td>
-                                    <td>
-                                        <?php
-                                        if (@$show_total->time_start != NULL & @$show_total->time_start != "00:00:00") {
-                                            echo @$show_total->time_start;
-                                        } else {
-                                            echo "-";
-                                        }
-                                        ?>
-                                    </td>
+                                <td><?php echo @dateConvertor($show_total->date); ?></td>
+                                <td>
+                                    <?php
+                                    if (@$show_total->time_start != NULL & @$show_total->time_start != "00:00:00") {
+                                        echo @$show_total->time_start;
+                                    } else {
+                                        echo "-";
+                                    }
+                                    ?>
+                                </td>
 
-                                    <td class="text-center">
-                                        <?php
-                                        if (@$show_total->card_status == NULL) {
-                                            echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                <td class="text-center">
+                                    <?php
+                                    if (@$show_total->card_status == NULL || @$show_total->card_status == 'approve_do') {
+                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                    }  else if ($show_total->card_status == 'reject'){
+                                        echo '<span class="badge badge-danger">ตรวจสอบงานอีกครั้ง</span>';
+                                    }else {
+                                         if ($show_total->card_status == '2e34609794290a770cb0349119d78d21') {
+                                            echo '<span class="badge badge-info">รอตรวจสอบงาน / ปิดงาน</span>';
                                         } else {
                                             echo @cardStatus($show_total->card_status);
                                         }
+                                    }
 
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php
-                                        if ($show_total->se_price != NULL) {
-                                            echo number_format("$show_total->se_price", 2);
-                                        } else {
-                                            echo '<strong class="badge badge-danger">ไม่มีข้อมูล</font></strong>';
-                                        }
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php
-                                        echo '<a href="#" data-toggle="modal" data-target="#show_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-info" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><i class="fa fa-search"></i></a>&nbsp';
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    if ($show_total->se_price != NULL) {
+                                        echo number_format("$show_total->se_price", 2);
+                                    } else {
+                                        echo '<strong class="badge badge-danger">ไม่มีข้อมูล</font></strong>';
+                                    }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    echo '<a href="#" data-toggle="modal" data-target="#show_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-info" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><i class="fa fa-search"></i></a>&nbsp';
 
-                                        if (@$show_total->admin_update == NULL) {
-                                            echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-warning btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
-                                        } else if (@$show_total->date_update == '0000-00-00') {
-                                            echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-success btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
-                                        } else {
-                                            echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-success btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
-                                        }
-                                        ?>
-                                        <a href="maintenance/print_work.php?key=<?php echo @$show_total->ticket; ?>" target="_blank" class="btn btn-sm btn-outline-danger" data-toggle="toptitle" data-placement="top" title="พิมพ์ใบงาน"><i class="fa fa-print"></i></a>
-                                        <?php if ($_SESSION['uclass'] == '3' || $_SESSION['uclass'] == '2') {
-                                            echo '<a href="#" data-toggle="modal" data-target="#edit_case" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-secondary  btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-edit"></i></a>';
-                                        }
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php
-                                        if (@$show_total->admin_update == NULL) {
-                                            echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
-                                        } else {
-                                            echo @getemployee($show_total->admin_update);
-                                        }
+                                    if (@$show_total->admin_update == NULL) {
+                                        echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-warning btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
+                                    } else if (@$show_total->date_update == '0000-00-00') {
+                                        echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-success btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
+                                    } else {
+                                        echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-success btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
+                                    }
+                                    ?>
+                                    <a href="maintenance/print_work.php?key=<?php echo @$show_total->ticket; ?>" target="_blank" class="btn btn-sm btn-outline-danger" data-toggle="toptitle" data-placement="top" title="พิมพ์ใบงาน"><i class="fa fa-print"></i></a>
+                                    <?php if ($_SESSION['uclass'] == '3' || $_SESSION['uclass'] == '2') {
+                                        echo '<a href="#" data-toggle="modal" data-target="#edit_case" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-secondary  btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-edit"></i></a>';
+                                    }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    if (@$show_total->admin_update == NULL) {
+                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                    } else {
+                                        echo @getemployee($show_total->admin_update);
+                                    }
 
-                                        ?>
-                                    </td>
-                                    <td class="text-center">
-                                        <?php
-                                        if (@$show_total->date_update == '0000-00-00') {
-                                            echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
-                                        } else {
-                                            echo @dateConvertor($show_total->date_update);
-                                        } ?>
-                                    </td>
-                                    <td class="text-center"> <?php echo '
-                <a href="?p=maintenance_case_all_service&key=' . @$show_total->ticket . '" target="_blank" class="btn btn-sm btn-success" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><span class="fa fa-list-ul"></span></a>'; ?>
+                                    ?>
+                                </td>
+                                <td class="text-center">
+                                    <?php
+                                    if (@$show_total->date_update == '0000-00-00') {
+                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                    } else {
+                                        echo @dateConvertor($show_total->date_update);
+                                    } ?>
+                                </td>
+                                <td class="text-center"> <?php echo '
+                <a href="?p=maintenance_case_all_service&key=' . @$show_total->ticket . '" class="btn btn-sm btn-success" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><span class="fa fa-list-ul"></span></a>'; ?>
 
-                                    </td>
-                                </tr>
-                            <?php
-                            }
-                            ?>
-                        </tbody>
+                                </td>
+                            </tr>
+                        <?php
+                        }
+                        ?>
+                    </tbody>
                     <?php } else { ?>
                         <tbody>
-                            <?php
-                            $i = 0;
-                            $get_total = $getdata->my_sql_select($connect, null, "building_list", "date_update = '" . date('Y-m-d') . "' ORDER BY ticket DESC");
-                            while ($show_total = mysqli_fetch_object($get_total)) {
-                                $i++;
-                            ?>
-                                <tr>
-                                    <td><?php echo @$i; ?></td>
-                                    <td><?php echo @$show_total->ticket; ?></td>
+                        <?php
+                        $i = 0;
+                        // $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID AND card_status NOT IN ('2e34609794290a770cb0349119d78d21','57995055c28df9e82476a54f852bd214') OR card_status IS NULL ORDER BY ticket DESC");
+                        $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "date LIKE '%" . date('Y') . "%' AND card_status NOT IN ('wait_approve','approve','57995055c28df9e82476a54f852bd214') AND work_flag NOT IN ('work_success') OR card_status IS NULL OR card_status = 'approve_do' ORDER BY ticket DESC");
+                        while ($show_total = mysqli_fetch_object($get_total)) {
+                            $i++;
+                        ?>
+                            <tr>
+                                <td><?php echo @$i; ?></td>
+                                <td><?php echo @$show_total->ticket; ?></td>
 
-                                    <!-- <td><?php echo @getemployee($show_total->user_key); ?></td> -->
-                                    <td><?php echo $show_total->se_namecall; ?></td>
-                                    <!-- <td><?php echo @getemployee_department($show_total->user_key); ?></td> -->
-                                    <td><?php echo @prefixbranch($show_total->se_location) ?></td>
+                                <!-- <td><?php echo @getemployee($show_total->user_key); ?></td> -->
+                                <td><?php
+                                    $search = $getdata->my_sql_query($connect, NULL, "employee", "card_key ='" . $show_total->se_namecall . "'");
+                                    if (COUNT($search) == 0) {
+                                        $chkName = $show_total->se_namecall;
+                                    } else {
+                                        $chkName = getemployee($show_total->se_namecall);
+                                    }
+
+                                    echo $chkName;
+                                    ?></td>
+                                <!-- <td><?php echo @getemployee_department($show_total->user_key); ?></td> -->
+                                <td><?php echo @prefixbranch($show_total->se_location) ?></td>
 
 
-                                    <td><?php echo @dateConvertor($show_total->date); ?></td>
-                                    <td>
-                                        <?php
-                                        if (@$show_total->time_start != NULL & @$show_total->time_start != "00:00:00") {
-                                            echo @$show_total->time_start;
-                                        } else {
-                                            echo "-";
-                                        }
-                                        ?>
-                                    </td>
+                                <td><?php echo @dateConvertor($show_total->date); ?></td>
+                                <td>
+                                    <?php
+                                    if (@$show_total->time_start != NULL & @$show_total->time_start != "00:00:00") {
+                                        echo @$show_total->time_start;
+                                    } else {
+                                        echo "-";
+                                    }
+                                    ?>
+                                </td>
 
-                                    <td class="text-center">
-                                        <?php
-                                        if (@$show_total->card_status == NULL) {
-                                            echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                <td class="text-center">
+                                    <?php
+                                    if (@$show_total->card_status == NULL || @$show_total->card_status == 'approve_do') {
+                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                    }  else if ($show_total->card_status == 'reject'){
+                                        echo '<span class="badge badge-danger">ตรวจสอบงานอีกครั้ง</span>';
+                                    }else {
+                                         if ($show_total->card_status == '2e34609794290a770cb0349119d78d21') {
+                                            echo '<span class="badge badge-info">รอตรวจสอบงาน / ปิดงาน</span>';
                                         } else {
                                             echo @cardStatus($show_total->card_status);
                                         }
+                                    }
 
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php
-                                        if ($show_total->se_price != NULL) {
-                                            echo number_format("$show_total->se_price", 2);
-                                        } else {
-                                            echo '<strong class="badge badge-danger">ไม่มีข้อมูล</font></strong>';
-                                        }
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php
-                                        echo '<a href="#" data-toggle="modal" data-target="#show_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-info" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><i class="fa fa-search"></i></a>&nbsp';
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    if ($show_total->se_price != NULL) {
+                                        echo number_format("$show_total->se_price", 2);
+                                    } else {
+                                        echo '<strong class="badge badge-danger">ไม่มีข้อมูล</font></strong>';
+                                    }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    echo '<a href="#" data-toggle="modal" data-target="#show_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-info" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><i class="fa fa-search"></i></a>&nbsp';
 
-                                        if (@$show_total->admin_update == NULL) {
-                                            echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-warning btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
-                                        } else if (@$show_total->date_update == '0000-00-00') {
-                                            echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-success btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
-                                        } else {
-                                            echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-success btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
-                                        }
-                                        ?>
-                                        <a href="maintenance/print_work.php?key=<?php echo @$show_total->ticket; ?>" target="_blank" class="btn btn-sm btn-outline-danger" data-toggle="toptitle" data-placement="top" title="พิมพ์ใบงาน"><i class="fa fa-print"></i></a>
-                                        <?php if ($_SESSION['uclass'] == '3' || $_SESSION['uclass'] == '2') {
-                                            echo '<a href="#" data-toggle="modal" data-target="#edit_case" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-secondary  btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-edit"></i></a>';
-                                        }
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php
-                                        if (@$show_total->admin_update == NULL) {
-                                            echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
-                                        } else {
-                                            echo @getemployee($show_total->admin_update);
-                                        }
+                                    if (@$show_total->admin_update == NULL) {
+                                        echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-warning btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
+                                    } else if (@$show_total->date_update == '0000-00-00') {
+                                        echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-success btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
+                                    } else {
+                                        echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-success btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
+                                    }
+                                    ?>
+                                    <a href="maintenance/print_work.php?key=<?php echo @$show_total->ticket; ?>" target="_blank" class="btn btn-sm btn-outline-danger" data-toggle="toptitle" data-placement="top" title="พิมพ์ใบงาน"><i class="fa fa-print"></i></a>
+                                    <?php if ($_SESSION['uclass'] == '3' || $_SESSION['uclass'] == '2') {
+                                        echo '<a href="#" data-toggle="modal" data-target="#edit_case" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-secondary  btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-edit"></i></a>';
+                                    }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    if (@$show_total->admin_update == NULL) {
+                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                    } else {
+                                        echo @getemployee($show_total->admin_update);
+                                    }
 
-                                        ?>
-                                    </td>
-                                    <td class="text-center">
-                                        <?php
-                                        if (@$show_total->date_update == '0000-00-00') {
-                                            echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
-                                        } else {
-                                            echo @dateConvertor($show_total->date_update);
-                                        } ?>
-                                    </td>
-                                    <td class="text-center"> <?php echo '
-                <a href="?p=maintenance_case_all_service&key=' . @$show_total->ticket . '" target="_blank" class="btn btn-sm btn-success" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><span class="fa fa-list-ul"></span></a>'; ?>
+                                    ?>
+                                </td>
+                                <td class="text-center">
+                                    <?php
+                                    if (@$show_total->date_update == '0000-00-00') {
+                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                    } else {
+                                        echo @dateConvertor($show_total->date_update);
+                                    } ?>
+                                </td>
+                                <td class="text-center"> <?php echo '
+                <a href="?p=maintenance_case_all_service&key=' . @$show_total->ticket . '" class="btn btn-sm btn-success" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><span class="fa fa-list-ul"></span></a>'; ?>
 
-                                    </td>
-                                </tr>
-                            <?php
-                            }
-                            ?>
-                        </tbody>
+                                </td>
+                            </tr>
+                        <?php
+                        }
+                        ?>
+                    </tbody>
                     <?php } ?>
                 </table>
             </div>

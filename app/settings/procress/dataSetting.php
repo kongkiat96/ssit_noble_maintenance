@@ -336,3 +336,31 @@ if (isset($_POST['edit_list_admin_approve'])) {
 		$alert = $warning;
 	}
 }
+
+if (isset($_POST['save_branch'])) {
+	if (htmlspecialchars($_POST['new_branch']) != null) {
+		$getdata->my_sql_insert(
+			$connect,
+			'branch',
+			"branch_name='" . htmlspecialchars($_POST['new_branch']) . "'"
+		);
+		$alert = $success;
+	} else {
+		$alert = $warning;
+	}
+}
+
+if (isset($_POST['save_edit_branch'])) {
+	if (htmlspecialchars($_POST['edit_branch']) != null) {
+		$getdata->my_sql_update(
+			$connect,
+			"branch",
+			"branch_name = '" . htmlspecialchars($_POST['edit_branch']) . "'",
+			"id='" . htmlspecialchars($_POST['dep_id']) . "'"
+		);
+
+		$alert = $saveedit;
+	} else {
+		$alert = $warning;
+	}
+}
