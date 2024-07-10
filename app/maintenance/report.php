@@ -284,7 +284,7 @@ if (isset($_POST['export'])) {
                             <td>วันที่แจ้ง</td>
                             <td>เวลาที่แจ้ง</td>
                             <td>วันที่แล้วเสร็จ</td>
-                            <td>เวลาที่แล้วเสร็จ</td>
+                            <td>ช่างผู้ดำเนินงาน</td>
                             <td>ผู้ทำรายการ</td>
                         </tr>
                     </thead>
@@ -368,15 +368,8 @@ if (isset($_POST['export'])) {
                                     }
                                     ?>
                                 </td>
-                                <td><?php
-                                    if ($show_total->card_status == "33831963cbe86c4e544c5a999984aa7b" && $show_total->card_status != "57995055c28df9e82476a54f852bd214") {
-                                        echo @$show_total->time_update;
-                                    } elseif ($show_total->card_status == "57995055c28df9e82476a54f852bd214") {
-                                        echo @cardStatus($show_total->card_status);
-                                    } else {
-                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
-                                    }
-                                    ?>
+                                <td>
+                                    <?php echo !empty($show_total->name_mt) ? str_replace(",", ", ", $show_total->name_mt) : '-';?>
                                 </td>
 
                                 <td>

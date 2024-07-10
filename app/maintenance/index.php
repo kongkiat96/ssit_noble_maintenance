@@ -189,7 +189,7 @@ include_once 'procress/dataSave.php';
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-md font-weight-bold text-warning text-uppercase mb-1">จำนวนรายการแจ้งปัญหารอการแก้ไข</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?php @$getwait = $getdata->my_sql_show_rows($connect, "building_list", "card_status IS NULL");
+                            <div class="h5 mb-0 font-weight-bold text-gray-800"><?php @$getwait = $getdata->my_sql_show_rows($connect, "building_list", "card_status IN ('f2c50a9a3e802c7be809f7f506b2b46a')");
                                                                                 echo @number_format($getwait); ?></div>
                         </div>
                         <div class="col-auto">
@@ -267,7 +267,8 @@ include_once 'procress/dataSave.php';
                         <?php
                         $i = 0;
                         // $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "ID AND card_status NOT IN ('2e34609794290a770cb0349119d78d21','57995055c28df9e82476a54f852bd214') OR card_status IS NULL ORDER BY ticket DESC");
-                        $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "date LIKE '%" . date('Y') . "%' AND card_status NOT IN ('wait_approve','approve','57995055c28df9e82476a54f852bd214') AND work_flag NOT IN ('work_success') OR card_status IS NULL OR card_status = 'approve_do' ORDER BY ticket DESC");
+                        // $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "date LIKE '%" . date('Y') . "%' AND card_status NOT IN ('wait_approve','approve','57995055c28df9e82476a54f852bd214') AND work_flag NOT IN ('work_success') OR card_status IS NULL OR card_status = 'approve_do' ORDER BY ID DESC");
+                        $get_total = $getdata->my_sql_select($connect, NULL, "building_list", "date LIKE '%" . date('Y') . "%' AND card_status NOT IN ('wait_approve','approve','57995055c28df9e82476a54f852bd214') AND work_flag NOT IN ('work_success') OR card_status IS NULL OR card_status IN ('approve_do','wait_approve') ORDER BY ID DESC");
                         while ($show_total = mysqli_fetch_object($get_total)) {
                             $i++;
                         ?>
@@ -303,13 +304,30 @@ include_once 'procress/dataSave.php';
 
                                 <td class="text-center">
                                     <?php
-                                    if (@$show_total->card_status == NULL || @$show_total->card_status == 'approve_do') {
+                                    // if (@$show_total->card_status == NULL || @$show_total->card_status == 'approve_do') {
+                                    //     echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                    // }  else if ($show_total->card_status == 'reject'){
+                                    //     echo '<span class="badge badge-danger">ตรวจสอบงานอีกครั้ง</span>';
+                                    // }else {
+                                    //      if ($show_total->card_status == '2e34609794290a770cb0349119d78d21') {
+                                    //         echo '<span class="badge badge-info">รอตรวจสอบงาน / ปิดงาน</span>';
+                                    //     } else {
+                                    //         echo @cardStatus($show_total->card_status);
+                                    //     }
+                                    // }
+                                    if (@$show_total->card_status == NULL) {
                                         echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
-                                    }  else if ($show_total->card_status == 'reject'){
-                                        echo '<span class="badge badge-danger">ตรวจสอบงานอีกครั้ง</span>';
-                                    }else {
-                                         if ($show_total->card_status == '2e34609794290a770cb0349119d78d21') {
-                                            echo '<span class="badge badge-info">รอตรวจสอบงาน / ปิดงาน</span>';
+                                    } else if ($show_total->card_status == 'wait_approve') {
+                                        echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
+                                    } else if ($show_total->card_status == 'approve') {
+                                        echo '<span class="badge badge-primary">รออนุมัติงานซ่อม</span>';
+                                    } else if ($show_total->card_status == '2e34609794290a770cb0349119d78d21') {
+                                        echo '<span class="badge badge-info">รอตรวจสอบงาน / ปิดงาน</span>';
+                                    } else {
+                                        if ($show_total->card_status == 'approve_do') {
+                                            echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                        } else if ($show_total->card_status == 'reject') {
+                                            echo '<span class="badge badge-danger">ตรวจสอบงานอีกครั้ง</span>';
                                         } else {
                                             echo @cardStatus($show_total->card_status);
                                         }
@@ -329,25 +347,43 @@ include_once 'procress/dataSave.php';
                                 <td>
                                     <?php
                                     echo '<a href="#" data-toggle="modal" data-target="#show_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-info" data-top="toptitle" data-placement="top" title="ตรวจสอบ"><i class="fa fa-search"></i></a>&nbsp';
-
-                                    if (@$show_total->admin_update == NULL) {
-                                        echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-warning btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
-                                    } else if (@$show_total->date_update == '0000-00-00') {
-                                        echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-success btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
+                                    if (in_array($show_total->card_status, ['wait_approve'])) {
                                     } else {
-                                        echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-success btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
+                                        if (@$show_total->admin_update == NULL) {
+                                            if (in_array($show_total->card_status, ['wait_approve'])) {
+                                            } else {
+                                                echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-warning btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
+                                            }
+                                        } else if (@$show_total->date_update == '0000-00-00') {
+                                            echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-success btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
+                                        } else {
+                                            echo '<a href="#" data-toggle="modal" data-target="#off_case_maintenance" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-success btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-check-circle"></i></a>';
+                                        }
                                     }
+
                                     ?>
                                     <a href="maintenance/print_work.php?key=<?php echo @$show_total->ticket; ?>" target="_blank" class="btn btn-sm btn-outline-danger" data-toggle="toptitle" data-placement="top" title="พิมพ์ใบงาน"><i class="fa fa-print"></i></a>
                                     <?php if ($_SESSION['uclass'] == '3' || $_SESSION['uclass'] == '2') {
+                                         if (in_array($show_total->card_status, ['wait_approve'])) {
+                                        } else {
                                         echo '<a href="#" data-toggle="modal" data-target="#edit_case" data-whatever="' . @$show_total->ticket . '" class="btn btn-sm btn-secondary  btn-outline" data-top="toptitle" data-placement="top" title="ดำเนินการ"><i class="fa fa-edit"></i></a>';
+                                        }
                                     }
                                     ?>
                                 </td>
                                 <td>
                                     <?php
                                     if (@$show_total->admin_update == NULL) {
-                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                        // echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                        if (@$show_total->card_status == NULL) {
+                                            echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                        } else if ($show_total->card_status == 'wait_approve') {
+                                            echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
+                                        } else if ($show_total->card_status == 'approve') {
+                                            echo '<span class="badge badge-primary">รออนุมัติงานซ่อม</span>';
+                                        } else if ($show_total->card_status == '2e34609794290a770cb0349119d78d21') {
+                                            echo '<span class="badge badge-info">รอตรวจสอบงาน / ปิดงาน</span>';
+                                        }
                                     } else {
                                         echo @getemployee($show_total->admin_update);
                                     }
@@ -357,7 +393,16 @@ include_once 'procress/dataSave.php';
                                 <td class="text-center">
                                     <?php
                                     if (@$show_total->date_update == '0000-00-00') {
-                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                        // echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                        if (@$show_total->card_status == NULL) {
+                                            echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                        } else if ($show_total->card_status == 'wait_approve') {
+                                            echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
+                                        } else if ($show_total->card_status == 'approve') {
+                                            echo '<span class="badge badge-primary">รออนุมัติงานซ่อม</span>';
+                                        } else if ($show_total->card_status == '2e34609794290a770cb0349119d78d21') {
+                                            echo '<span class="badge badge-info">รอตรวจสอบงาน / ปิดงาน</span>';
+                                        }
                                     } else {
                                         echo @dateConvertor($show_total->date_update);
                                     } ?>

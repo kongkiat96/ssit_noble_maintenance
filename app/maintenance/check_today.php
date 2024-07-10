@@ -54,7 +54,23 @@ $show_case = $getdata->my_sql_query($connect, null, "building_list", "date_updat
                         <td><?php echo @prefixbranch($showcase->se_location); ?></td>
                         <td><?php echo @dateConvertor($showcase->date); ?></td>
                         <td><?php echo @dateConvertor($showcase->date_update); ?></td>
-                        <td><?php echo @cardStatus($showcase->card_status); ?></td>
+                        <td><?php if (@$showcase->card_status == NULL) {
+                                        echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                    } else if ($showcase->card_status == 'wait_approve') {
+                                        echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
+                                    } else if ($showcase->card_status == 'approve') {
+                                        echo '<span class="badge badge-primary">รออนุมัติงานซ่อม</span>';
+                                    } else if ($showcase->card_status == '2e34609794290a770cb0349119d78d21') {
+                                        echo '<span class="badge badge-info">รอตรวจสอบงาน / ปิดงาน</span>';
+                                    } else {
+                                        if ($showcase->card_status == 'approve_do') {
+                                            echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                        } else if ($showcase->card_status == 'reject') {
+                                            echo '<span class="badge badge-danger">ตรวจสอบงานอีกครั้ง</span>';
+                                        } else {
+                                            echo @cardStatus($showcase->card_status);
+                                        }
+                                    } ?></td>
                     </tr>
                 <?php } ?>
             </tbody>

@@ -44,9 +44,21 @@ $chk_case = $getdata->my_sql_query($connect, NULL, "building_list", "ticket='" .
               <h2 class="form-control"><?php
                                         if (@$chk_case->card_status == NULL) {
                                           echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
-                                        } else {
-                                          echo @cardStatus($chk_case->card_status);
-                                        }
+                                      } else if ($chk_case->card_status == 'wait_approve') {
+                                          echo '<span class="badge badge-info">รออนุมัติแจ้งงาน</span>';
+                                      } else if ($chk_case->card_status == 'approve') {
+                                          echo '<span class="badge badge-primary">รออนุมัติงานซ่อม</span>';
+                                      } else if ($chk_case->card_status == '2e34609794290a770cb0349119d78d21') {
+                                          echo '<span class="badge badge-info">รอตรวจสอบงาน / ปิดงาน</span>';
+                                      } else {
+                                          if ($chk_case->card_status == 'approve_do') {
+                                              echo '<span class="badge badge-warning">รอดำเนินการแก้ไข</span>';
+                                          } else if ($chk_case->card_status == 'reject') {
+                                              echo '<span class="badge badge-danger">ตรวจสอบงานอีกครั้ง</span>';
+                                          } else {
+                                              echo @cardStatus($chk_case->card_status);
+                                          }
+                                      }
                                         ?></h2>
 
             </div>
@@ -116,10 +128,12 @@ $chk_case = $getdata->my_sql_query($connect, NULL, "building_list", "ticket='" .
               ?>
               <input type="text" name="namecall" id="namecall" class="form-control" readonly value="<?php echo $chkName; ?>">
             </div>
-            <div class="col-md-6 col-sm-12">
-              <label for="location">สาขา</label>
-              <input type="text" name="location" id="location" class="form-control" readonly value="<?php echo @prefixbranch($chk_case->se_location); ?>">
-            </div>
+            <?php if (!empty($chk_case->se_location)) { ?>
+              <div class="col-md-6 col-sm-12">
+                <label for="location">สาขา</label>
+                <input type="text" name="location" id="location" class="form-control" readonly value="<?php echo @prefixbranch($chk_case->se_location); ?>">
+              </div>
+            <?php } ?>
           </div>
           <div class="form-group row">
             <div class="col-12">

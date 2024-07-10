@@ -292,14 +292,6 @@
 									?>" id="device-tab" data-toggle="tab" href="#device" role="tab" aria-controls="device" aria-selected="false">
 					<i class="mdi mdi-box-shadow mr-1"></i> อุปกรณ์</a>
 			</li>
-
-			<li class="nav-item">
-				<a class="nav-link <?php if (isset($_POST['save_branch']) || isset($_POST['save_edit_branch'])) {
-										echo 'active';
-									};
-									?>" id="branch-tab" data-toggle="tab" href="#branch" role="tab" aria-controls="branch" aria-selected="false">
-					<i class="mdi mdi-lan mr-1"></i> สาขา</a>
-			</li>
 		</ul>
 
 		<div class="tab-content" id="myTabContent2">
@@ -517,62 +509,6 @@
 													<a href="#" onclick="deleteDevice('<?php echo @$showdevice->id; ?>');" class="btn btn-sm btn-outline-danger" data-toggle="toptitle" data-placement="top" title="ลบรายการนี้"><i class="fa fa-trash-alt"></i></a>
 												<?php } ?>
 											</td>
-										</tr>
-									<?php
-									}
-									?>
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-
-			</div>
-
-			<div class="tab-pane pt-3 fade <?php if (isset($_POST['save_branch']) || isset($_POST['save_edit_branch'])) {
-												echo 'show active';
-											};
-											?>" id="branch" role="tabpanel" aria-labelledby="branch-tab">
-
-				<div class="card shadow">
-					<div class="card-body">
-						<div class="row">
-							<button class="btn btn-success btn-xs float-right mb-2" data-toggle="modal" data-target="#modal_new_branch"><i class="fa fa-plus fa-fw"></i> เพิ่มสาขา</button>
-						</div>
-						<div class="responsive-data-table-5">
-							<table id="responsive-data-table-5" class="table dt-responsive nowrap hover text-center" width="100%">
-								<thead class="bg-info text-white font-weight-bold">
-									<tr>
-										<td>ลำดับ</td>
-										<td>รายชื่อสาขา</td>
-										<td>การแสดงผล</td>
-										<td>จัดการ</td>
-									</tr>
-								</thead>
-								<tbody>
-									<?php
-									$i = 0;
-									$getbranch = $getdata->my_sql_select($connect, null, "branch", "id AND status != '2'");
-									while ($showbranch = mysqli_fetch_object($getbranch)) {
-										$i++; ?>
-										<tr>
-											<td><?php echo $i; ?></td>
-											<td><?php echo @$showbranch->branch_name; ?></td>
-											<td>
-												<?php
-												if ($showbranch->status == 1) {
-													echo '<span class="mb-2 mr-2 badge badge-success">กำลังใช้งาน</span>';
-												} elseif ($showbranch->status == 0) {
-													echo '<span class="mb-2 mr-2 badge badge-danger">ปิดการใช้งาน</span>';
-												} ?>
-											</td>
-											<td>
-												<button class="btn btn-sm btn-info" data-toggle="modal" data-target="#edit_branch" data-whatever="<?php echo @$showbranch->id; ?>"><i class="fa fa-edit"></i></button>
-												<?php if ($_SESSION['uclass'] == 3) { ?>
-													<a href="#" onclick="deletebranch('<?php echo @$showbranch->id; ?>');" class="btn btn-sm btn-outline-danger" data-toggle="toptitle" data-placement="top" title="ลบรายการนี้"><i class="fa fa-trash-alt"></i></a>
-												<?php } ?>
-											</td>
-
 										</tr>
 									<?php
 									}

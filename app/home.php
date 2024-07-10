@@ -119,7 +119,7 @@ echo @$alert;
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                         <div class="col-12">
                             <label for="condition">ข้อมูลการแจ้งการแจ้ง</label>
                         </div>
@@ -133,26 +133,27 @@ echo @$alert;
                             <input type="radio" name="case" id="case_other" value="other">
                             <label for="case_other">แจ้งให้ผู้อื่น</label>
                         </div>
-                    </div>
+                    </div> -->
+                    <hr>
                     <div class="form-group row">
-                        <div class="col-md-6 col-sm-12">
-                            <label for="namecall" id="namecallLabel">เลือกชื่อผู้แจ้ง</label>
-                            <!-- <input type="text" name="namecall" id="namecall" class="form-control" required> -->
-                            <select name="namecall" id="namecall" class="form-control select2bs4" required style="width: 100%;">
+                        <div class="col-6">
+                            <label for="namecall" id="namecallLabel">เลือกชื่อผู้แจ้ง <span class="text-danger">(กรณีแจ้งแทนผู้อื่น)</span></label>
+                            <!-- <input type="text" class="form-control input-sm" name="namecall" id="namecall" required> -->
+                            <select name="namecall" id="namecall" class="form-control select2bs4" style="width: 100%;">
                                 <option value="">--- เลือกข้อมูล ---</option>
-                                <?php $getuser = $getdata->my_sql_select($connect, NULL, "user", "user_status = '1'");
+                                <?php $getuser = $getdata->my_sql_select($connect, NULL, "user", "user_status = '1' AND user_key != '" . $_SESSION['ukey'] . "'");
                                 while ($showUser = mysqli_fetch_object($getuser)) {
                                     echo '<option value="' . $showUser->user_key . '">' .  getemployee($showUser->user_key) . '</option>';
                                 }
                                 ?>
                             </select>
                             <div class="invalid-feedback">
-                                เลือก ข้อมูล .
+                                เลือก ข้อมูล.
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-12">
-                            <label for="location" id="locationLabel">สาขา</label>
-                            <select class="form-control select2bs4" style="width: 100%;" name="location" id="location" required>
+                        <div class="col-6">
+                            <label for="location" id="locationLabel">สาขา <span class="text-danger">(กรณีแจ้งแทนผู้อื่น)</span></label>
+                            <select class="form-control select2bs4" style="width: 100%;" name="location" id="location">
                                 <option value="">--- เลือก สาขา ---</option>
                                 <?php
                                 $getbranch = $getdata->my_sql_select($connect, NULL, "branch", "id AND status ='1' ORDER BY id ");
@@ -832,18 +833,18 @@ echo @$alert;
             });
         });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // เรียกฟังก์ชันเมื่อมีการเปลี่ยนแปลงใน radio buttons
-        document.querySelectorAll('input[type=radio][name="case"]').forEach(function(radio) {
-            radio.addEventListener('change', function() {
-                if (this.value === 'me') {
-                    document.getElementById('namecallLabel').innerText = 'เลือกชื่อผู้แจ้ง';
-                    document.getElementById('locationLabel').innerText = 'สาขา';
-                } else if (this.value === 'other') {
-                    document.getElementById('namecallLabel').innerText = 'เลือกชื่อผู้ที่จะแจ้งให้';
-                    document.getElementById('locationLabel').innerText = 'สาขาที่จะแจ้ง';
-                }
-            });
-        });
-    });
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     // เรียกฟังก์ชันเมื่อมีการเปลี่ยนแปลงใน radio buttons
+    //     document.querySelectorAll('input[type=radio][name="case"]').forEach(function(radio) {
+    //         radio.addEventListener('change', function() {
+    //             if (this.value === 'me') {
+    //                 document.getElementById('namecallLabel').innerText = 'เลือกชื่อผู้แจ้ง';
+    //                 document.getElementById('locationLabel').innerText = 'สาขา';
+    //             } else if (this.value === 'other') {
+    //                 document.getElementById('namecallLabel').innerText = 'เลือกชื่อผู้ที่จะแจ้งให้';
+    //                 document.getElementById('locationLabel').innerText = 'สาขาที่จะแจ้ง';
+    //             }
+    //         });
+    //     });
+    // });
 </script>

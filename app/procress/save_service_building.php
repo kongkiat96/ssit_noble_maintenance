@@ -26,13 +26,14 @@ if (isset($_POST['save_casebu'])) {
 
         // $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "user_key = '" . $_SESSION['ukey'] . "'");
 
-        if ($_POST['case'] == 'me') {
-            $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "user_key = '" . $_SESSION['ukey'] . "'");
-        } else if ($_POST['case'] == 'other') {
-            $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "user_key = '" . $_POST['namecall'] . "'");
-        } else {
-            $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "user_key = '" . $_SESSION['ukey'] . "'");
-        }
+        $getApproveDep = in_array($_POST['se_id'], ['13', '16']) ? 'HR' : 'IT';
+            if (empty($_POST['approve'] || $_POST['approve'] == '-')) {
+                $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "user_key = '" . $_SESSION['ukey'] . "'");
+            } else if (!empty($_POST['approve'] || $_POST['approve'] != '-')) {
+                $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "user_key = '" . $_POST['namecall'] . "'");
+            } else {
+                $chkManager =  $getdata->my_sql_query($connect, NULL, "manager", "user_key = '" . $_SESSION['ukey'] . "'");
+            }
 
         if (COUNT($chkManager) == 0) {
             $getdata->my_sql_insert($connect, "building_list", "
@@ -45,7 +46,7 @@ if (isset($_POST['save_casebu'])) {
         as_code = '" . htmlspecialchars($_POST['as_code']) . "',
         pic_before = '" . $fixname_pic . "',
         se_other = '" . htmlspecialchars($_POST['other']) . "',
-        se_namecall = '" . htmlspecialchars($_POST['namecall']) . "',
+        se_namecall = '" . $_SESSION['ukey'] . "',
         se_approve = '" . htmlspecialchars($_POST['approve']) . "',
         se_location = '" . htmlspecialchars($_POST['location']) . "',
         date = '" . date("Y-m-d") . "',
@@ -61,8 +62,8 @@ if (isset($_POST['save_casebu'])) {
             as_code = '" . htmlspecialchars($_POST['as_code']) . "',
             pic_before = '" . $fixname_pic . "',
             se_other = '" . htmlspecialchars($_POST['other']) . "',
-            se_namecall = '" . htmlspecialchars($_POST['namecall']) . "',
-            se_approve = '" . htmlspecialchars($_POST['approve']) . "',
+            se_namecall = '" . $chkManager->user_key . "',
+            se_approve = '" . getemployee($chkManager->manager_user_key) . "',
             se_location = '" . htmlspecialchars($_POST['location']) . "',
             card_status = 'wait_approve',
             manager_approve = '" . $chkManager->manager_user_key . "',
